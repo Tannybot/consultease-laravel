@@ -123,10 +123,11 @@
                         
                         <center>
                         <table class="filter-container" style="border: none;" border="0">
-                            <tr>
-                                <td colspan="4">
-                                    <p style="font-size: 20px;font-weight:600;padding-left: 12px;">Status</p>
-                                </td>
+                            <tr >
+                            <td colspan="1" class="nav-bar" style="display: flex; align-items: center;">
+                                @include('components.hamburger')
+                                <p style="font-size: 23px;padding-left:12px;font-weight: 600;margin-left:20px;">Home</p>
+                            </td>
                             </tr>
                             <tr>
                                 <td style="width: 25%;">

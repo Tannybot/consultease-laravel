@@ -165,31 +165,85 @@
 }
 
 /* Mobile responsiveness */
-
 @media screen and (max-width: 768px) {
     .container {
         flex-direction: column;
         height: auto;
     }
 
+    /* Transform Sidebar into Fixed Sliding Drawer */
     .menu {
-        width: 100%;
-        height: auto;
-        border-right: none;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        position: fixed;
+        top: 0;
+        left: -300px;
+        /* Hidden off-screen by default */
+        width: 280px !important;
+        height: 100vh;
+        z-index: 9999;
+        border-right: 1px solid rgba(255, 255, 255, 0.15);
+        transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        /* Sexy slide animation */
+        box-shadow: 5px 0 15px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Class added by JS to slide the drawer in */
+    .menu.open {
+        left: 0;
+    }
+
+    /* The Hamburger Button injected into the top headers */
+    .hamburger-btn {
+        display: inline-flex;
+        background: var(--primarycolor);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 8px 12px;
+        font-size: 20px;
+        cursor: pointer;
+        margin-right: 15px;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .hamburger-btn:active {
+        transform: scale(0.95);
+    }
+
+    /* A semi-transparent overlay to tap out of the menu */
+    .menu-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 9000;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .menu-overlay.open {
+        display: block;
+        opacity: 1;
+    }
+
+    /* Unhide profile pieces if they were hidden by the Bottom Tab previously */
+    .menu-container>tbody>tr:first-child,
+    .profile-container {
+        display: table-row !important;
+    }
+
+    .profile-container {
+        display: block !important;
     }
 
     .dash-body {
         width: 100%;
         height: auto;
-    }
-
-    .profile-title {
-        font-size: 16px;
-    }
-
-    .profile-subtitle {
-        font-size: 12px;
+        padding: 10px;
     }
 
     .header-searchbar {

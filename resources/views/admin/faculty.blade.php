@@ -417,10 +417,16 @@
                         <tr>
                                 <td class="label-td" colspan="2">{!! $errorlist[$error_1] !!}</td>
                             </tr>
+                            <tr >
+                                <td colspan="1" class="nav-bar" style="display: flex; align-items: center;">
+                                    @include('components.hamburger')
+                                    <p style="font-size: 23px;padding-left:12px;font-weight: 600;margin-left:20px;">Faculty Providers</p>
+                                </td>
+                            </tr>
                             <tr>
                                 <td>
                                     <p style="padding: 0;margin: 0;text-align: left;font-size: 25px;font-weight: 500;">Edit Faculty Details.</p>
-                                Faculty ID : {{ $id }} (Auto Generated)<br><br>
+                                    Faculty ID : {{ $id }} (Auto Generated)<br><br>
                                 </td>
                             </tr>
                             <tr>

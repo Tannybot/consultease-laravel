@@ -787,17 +787,104 @@ input[type=search]:focus {
   }
 
   .popup {
-    width: 90%;
+    width: 95% !important;
     margin: 20px auto;
+    max-height: 80vh;
+    overflow-y: auto;
   }
 
   .overlay:target .popup {
     margin: 20px auto;
   }
 
+  /* Force buttons to be comfortable touch targets */
+  .btn {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 15px !important;
+  }
+
+  /* Make sure the main dashboard widgets stack cleanly */
+  .dashboard-items {
+    width: 100% !important;
+    margin-bottom: 15px;
+  }
+
+  .dashboard-icons,
+  .dashboard-icons-setting {
+    margin: 0 !important;
+  }
+
+  .h1-dashboard {
+    font-size: 24px !important;
+  }
+
   .form-row {
     flex-direction: column;
     gap: 0;
+  }
+
+  /* Force main layout tables into block elements so they stack on mobile */
+  table[width="100%"] {
+    display: block !important;
+    width: 100% !important;
+  }
+
+  table[width="100%"]>tbody,
+  table[width="100%"]>tbody>tr,
+  table[width="100%"]>tbody>tr>td {
+    display: block !important;
+    width: 100% !important;
+  }
+
+  /* Ensure dashboard item wrappers take full width */
+  table.filter-container {
+    width: 100%;
+    display: block;
+  }
+
+  table.filter-container tbody,
+  table.filter-container tr,
+  table.filter-container td {
+    display: block;
+  }
+
+  .filter-container-items {
+    margin-left: 0;
+    margin-top: 10px;
+  }
+
+  /* Make dense data tables (sub-tables) horizontally scrollable */
+  .abc.scroll {
+    height: auto !important;
+    max-height: 400px;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    margin-bottom: 20px !important;
+  }
+
+  .sub-table {
+    width: 100% !important;
+    min-width: 500px;
+    /* Force minimum width to enable scrolling */
+  }
+
+  /* Make form inner container full width */
+  .form-inner,
+  .center-wrapper {
+    padding: 10px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Stack split columns in dashboard headers */
+  td[width="25%"],
+  td[width="15%"],
+  td[width="10%"] {
+    width: 100% !important;
+    display: block;
+    text-align: left;
+    padding: 5px 20px;
   }
 
   .role-options {

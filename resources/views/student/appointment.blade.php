@@ -195,9 +195,9 @@
                 <td width="13%" >
                     <a href="{{ url('/student/dashboard') }}" ><button  class="login-btn btn-primary-soft btn btn-icon-back"  style="padding-top:11px;padding-bottom:11px;margin-left:20px;width:125px"><font class="tn-in-text">Back</font></button></a>
                 </td>
-                <td>
-                    <p style="font-size: 23px;padding-left:12px;font-weight: 600;">My Bookings history</p>
-
+                <td colspan="1" class="nav-bar" style="display: flex; align-items: center;">
+                    @include('components.hamburger')
+                    <p style="font-size: 23px;padding-left:12px;font-weight: 600;margin-left:20px;">My Bookings</p>
                 </td>
                 <td width="15%">
                     <p style="font-size: 14px;color: rgb(119, 119, 119);padding: 0;margin: 0;text-align: right;">

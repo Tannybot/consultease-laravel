@@ -85,9 +85,9 @@
                         
                         <tr >
                             
-                            <td colspan="1" class="nav-bar" >
-                            <p style="font-size: 23px;padding-left:12px;font-weight: 600;margin-left:20px;">     Dashboard</p>
-                           
+                            <td colspan="1" class="nav-bar" style="display: flex; align-items: center;">
+                                @include('components.hamburger')
+                                <p style="font-size: 23px;padding-left:12px;font-weight: 600;margin-left:20px;">Home</p>
                             </td>
                             <td width="25%">
 

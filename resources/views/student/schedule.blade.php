@@ -31,7 +31,6 @@
                             </td>
                             <td style="padding:0px;margin:0px;">
                                 <p class="profile-title">{{ substr($student->sname,0,13) }}..</p>
-                                <p class="profile-subtitle">{{ substr($student->semail,0,22) }}</p>
                             </td>
                         </tr>
                         <tr>
