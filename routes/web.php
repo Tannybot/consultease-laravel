@@ -24,6 +24,11 @@ Route::post('/signup/faculty', [AuthController::class , 'registerFaculty']);
 
 Route::post('/logout', [AuthController::class , 'logout'])->name('logout');
 
+// Dynamic Web Notification API Routes
+Route::get('/api/notifications', [App\Http\Controllers\NotificationController::class , 'fetch'])->name('notifications.fetch');
+Route::post('/api/notifications/log', [App\Http\Controllers\NotificationController::class , 'log'])->name('notifications.log');
+Route::post('/api/notifications/read', [App\Http\Controllers\NotificationController::class , 'markAsRead'])->name('notifications.read');
+
 // Student Routes
 Route::prefix('student')->name('student.')->group(function () {
     Route::get('/dashboard', [StudentController::class , 'dashboard'])->name('dashboard');
@@ -32,8 +37,10 @@ Route::prefix('student')->name('student.')->group(function () {
     Route::get('/schedule', [StudentController::class , 'schedule'])->name('schedule');
     Route::post('/schedule', [StudentController::class , 'schedule']);
     Route::post('/schedule/add', [StudentController::class , 'addSession'])->name('schedule.add');
+    Route::post('/schedule/delete', [StudentController::class , 'deleteSession'])->name('schedule.delete');
     Route::get('/appointment', [StudentController::class , 'appointment'])->name('appointment');
     Route::post('/appointment', [StudentController::class , 'appointment']);
+    Route::post('/appointment/delete', [StudentController::class , 'deleteAppointment'])->name('appointment.delete');
     Route::get('/settings', [StudentController::class , 'settings'])->name('settings');
     Route::post('/settings', [StudentController::class , 'settings']);
     Route::post('/settings/edit', [StudentController::class , 'editStudent'])->name('settings.edit');

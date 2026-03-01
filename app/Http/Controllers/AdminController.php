@@ -168,6 +168,14 @@ class AdminController extends Controller
 
         if ($faculty) {
             $email = $faculty->facemail;
+
+            // Cascade delete all schedules and appointments for this faculty
+            $schedules = DB::table('schedule')->where('facid', $id)->get();
+            foreach ($schedules as $s) {
+                DB::table('appointment')->where('scheduleid', $s->scheduleid)->delete();
+            }
+            DB::table('schedule')->where('facid', $id)->delete();
+
             DB::table('faculty')->where('facid', $id)->delete();
             DB::table('webuser')->where('email', $email)->delete();
         }
@@ -234,7 +242,13 @@ class AdminController extends Controller
     public function deleteSession(Request $request)
     {
         $id = $request->input('id');
+
+        // Cascade delete any appointments tied to this session block
+        DB::table('appointment')->where('scheduleid', $id)->delete();
+
+        // Delete the schedule session row itself
         DB::table('schedule')->where('scheduleid', $id)->delete();
+
         return redirect('/admin/schedule');
     }
 

@@ -207,7 +207,7 @@
                                         
                                         <a href="?action=view&id={{ $schedule->scheduleid }}" class="non-style-link"><button  class="btn-primary-soft btn button-icon btn-view"  style="padding-left: 40px;padding-top: 12px;padding-bottom: 12px;margin-top: 10px;"><font class="tn-in-text">View</font></button></a>
                                        &nbsp;&nbsp;&nbsp;
-                                       <a href="?action=drop&id={{ $schedule->scheduleid }}&name={{ $schedule->title }}" class="non-style-link"><button  class="btn-primary-soft btn button-icon btn-delete"  style="padding-left: 40px;padding-top: 12px;padding-bottom: 12px;margin-top: 10px;"><font class="tn-in-text">Cancel Session</font></button></a>
+                                       <a href="?action=drop&id={{ $schedule->scheduleid }}&name={{ urlencode($schedule->title) }}" class="non-style-link"><button  class="btn-primary-soft btn button-icon btn-delete"  style="padding-left: 40px;padding-top: 12px;padding-bottom: 12px;margin-top: 10px;"><font class="tn-in-text">Delete Session</font></button></a>
                                         </div>
                                         </td>
                                     </tr>
@@ -235,7 +235,7 @@
                     <h2>Are you sure?</h2>
                     <a class="close" href="{{ url('/faculty/schedule') }}">&times;</a>
                     <div class="content">
-                        You want to delete this record<br>({{ substr($nameget,0,40) }}).
+                        You want to delete this specific session<br>({{ urldecode($nameget ?? request()->query('name', '')) }}).
                         
                     </div>
                     <div style="display: flex;justify-content: center;">
@@ -395,5 +395,6 @@
     @endif
     </div>
 
+    @include('components.notifications')
 </body>
 </html>

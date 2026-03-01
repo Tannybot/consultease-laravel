@@ -214,6 +214,11 @@
 
             <tr>
                 <td colspan="4" style="padding-top:10px;width: 100%;" >
+                    @if(session('success'))
+                        <div style="background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; padding: 15px; margin: 10px 45px; border-radius: 5px; font-weight: 500;">
+                            ✅ {{ session('success') }}
+                        </div>
+                    @endif
                     <p class="heading-main12" style="margin-left: 45px;font-size:18px;color:rgb(49, 49, 49)">My Bookings ({{ $appointments->count() }})</p>
                 </td>
 
@@ -296,7 +301,7 @@
                                                         Scheduled Date: {{ $appo->scheduledate }}<br>Starts: <b>@ {{ substr($appo->scheduletime,0,5) }}</b> (24h)
                                                     </div>
                                                     <br>
-                                                    <a href="?action=drop&id={{ $appo->appoid }}&title={{ $appo->title }}&doc={{ $appo->facname }}" ><button  class="login-btn btn-primary-soft btn "  style="padding-top:11px;padding-bottom:11px;width:100%"><font class="tn-in-text">Cancel Booking</font></button></a>
+                                                    <a href="?action=drop&id={{ $appo->appoid }}&title={{ urlencode($appo->title) }}&doc={{ urlencode($appo->facname) }}" ><button  class="login-btn btn-primary-soft btn "  style="padding-top:11px;padding-bottom:11px;width:100%"><font class="tn-in-text">Cancel Booking</font></button></a>
                                                     @if($appo->status == 'done')
                                                     <a href="?action=review&id={{ $appo->appoid }}" ><button  class="login-btn btn-primary btn "  style="padding-top:11px;padding-bottom:11px;width:100%;margin-top:5px"><font class="tn-in-text">Review Faculty</font></button></a>
                                                     @endif
@@ -324,5 +329,30 @@
     </div>
 </div>
 
+   @if($action=='drop')
+        <div id="popup1" class="overlay">
+            <div class="popup">
+                <center>
+                    <h2>Are you sure?</h2>
+                    <a class="close" href="{{ url('/student/appointment') }}">&times;</a>
+                    <div class="content">
+                        You are about to cancel this appointment.<br><br>
+                        Faculty Name: &nbsp;<b>{{ urldecode($docParam) }}</b><br>
+                        Session Title &nbsp; : <b>{{ urldecode($titleParam) }}</b><br><br>
+                    </div>
+                    <div style="display: flex;justify-content: center;">
+                        <form action="{{ route('student.appointment.delete') }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="appoid" value="{{ $id }}">
+                            <button type="submit" class="btn-primary btn" style="display:flex;justify-content:center;align-items:center;margin:10px;padding:10px;"><font class="tn-in-text">&nbsp;Yes, Cancel&nbsp;</font></button>
+                        </form>&nbsp;&nbsp;&nbsp;
+                        <a href="{{ url('/student/appointment') }}" class="non-style-link"><button class="btn-primary-soft btn" style="display:flex;justify-content:center;align-items:center;margin:10px;padding:10px;"><font class="tn-in-text">&nbsp;&nbsp;No, Keep It&nbsp;&nbsp;</font></button></a>
+                    </div>
+                </center>
+            </div>
+        </div>
+   @endif
+
+    @include('components.notifications')
 </body>
 </html>

@@ -187,12 +187,22 @@
                                             @endphp
 
                                             @if($isBooked)
-                                                <button class="login-btn btn " style="padding-top:11px;padding-bottom:11px;width:100%;background-color:#e0e0e0;color:#666;cursor:not-allowed;" disabled><font class="tn-in-text">Already Booked</font></button>
+                                                @php $bookedAppoId = $myAppointments[$sched->scheduleid]; @endphp
+                                                <a href="?action=drop&id={{ $bookedAppoId }}&title={{ urlencode($sched->title) }}&doc={{ urlencode($sched->facname) }}" >
+                                                    <button class="login-btn btn " style="padding-top:11px;padding-bottom:11px;width:100%;margin-bottom:5px;background-color:#ffe0e0;color:#cc0000;"><font class="tn-in-text">Cancel Booking</font></button>
+                                                </a>
                                             @elseif($isFull)
-                                                <button class="login-btn btn " style="padding-top:11px;padding-bottom:11px;width:100%;background-color:#ffe0e0;color:#cc0000;cursor:not-allowed;" disabled><font class="tn-in-text">Session Full</font></button>
+                                                <button class="login-btn btn " style="padding-top:11px;padding-bottom:11px;width:100%;margin-bottom:5px;background-color:#ffe0e0;color:#cc0000;cursor:not-allowed;" disabled><font class="tn-in-text">Session Full</font></button>
                                             @else
-                                                <a href="{{ url('/student/appointment?action=add&id='.$sched->scheduleid) }}" ><button  class="login-btn btn-primary-soft btn "  style="padding-top:11px;padding-bottom:11px;width:100%"><font class="tn-in-text">Book Now</font></button></a>
+                                                <a href="{{ url('/student/appointment?action=add&id='.$sched->scheduleid) }}" 
+                                                   onclick="sendEmailJSAndBook(event, '{{ addslashes($sched->facname) }}', '{{ addslashes($student->sname) }}', '{{ addslashes($sched->facemail) }}', '{{ addslashes($sched->title) }}', '{{ $sched->scheduledate }}', '{{ $sched->scheduletime }}', this.href)">
+                                                   <button class="login-btn btn-primary-soft btn " style="padding-top:11px;padding-bottom:11px;width:100%;margin-bottom:5px;"><font class="tn-in-text">Book Now</font></button>
+                                                </a>
                                             @endif
+                                            
+                                            <a href="?action=delete-session&id={{ $sched->scheduleid }}&title={{ urlencode($sched->title) }}&doc={{ urlencode($sched->facname) }}" >
+                                                <button class="login-btn btn " style="padding-top:11px;padding-bottom:11px;width:100%;background-color:#ffaaaa;color:#990000;"><font class="tn-in-text">Delete Session</font></button>
+                                            </a>
                                         </div>
                                     </div>
                                 </td>
@@ -339,5 +349,132 @@
 @endif
 
 </div>
+
+    @if($action=='drop')
+        <div id="popup1" class="overlay">
+            <div class="popup">
+                <center>
+                    <h2>Are you sure?</h2>
+                    <a class="close" href="{{ url('/student/schedule') }}">&times;</a>
+                    <div class="content">
+                        You are about to cancel this appointment.<br><br>
+                        Faculty Name: &nbsp;<b>{{ urldecode($docParam ?? request()->query('doc', '')) }}</b><br>
+                        Session Title &nbsp; : <b>{{ urldecode($titleParam) }}</b><br><br>
+                    </div>
+                    <div style="display: flex;justify-content: center;">
+                        <form action="{{ route('student.appointment.delete') }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="appoid" value="{{ $id }}">
+                            <button type="submit" class="btn-primary btn" style="display:flex;justify-content:center;align-items:center;margin:10px;padding:10px;"><font class="tn-in-text">&nbsp;Yes, Cancel&nbsp;</font></button>
+                        </form>&nbsp;&nbsp;&nbsp;
+                        <a href="{{ url('/student/schedule') }}" class="non-style-link"><button class="btn-primary-soft btn" style="display:flex;justify-content:center;align-items:center;margin:10px;padding:10px;"><font class="tn-in-text">&nbsp;&nbsp;No, Keep It&nbsp;&nbsp;</font></button></a>
+                    </div>
+                </center>
+            </div>
+        </div>
+        
+    @elseif($action=='delete-session')
+        <div id="popup1" class="overlay">
+            <div class="popup">
+                <center>
+                    <h2>Are you sure?</h2>
+                    <a class="close" href="{{ url('/student/schedule') }}">&times;</a>
+                    <div class="content">
+                        You are about to completely delete this session for everyone.<br><br>
+                        Faculty Name: &nbsp;<b>{{ urldecode($docParam ?? request()->query('doc', '')) }}</b><br>
+                        Session Title &nbsp; : <b>{{ urldecode($titleParam) }}</b><br><br>
+                    </div>
+                    <div style="display: flex;justify-content: center;">
+                        <form action="{{ route('student.schedule.delete') }}" method="POST">
+                            @csrf
+                            <!-- ID here is scheduleid, not appoid -->
+                            <input type="hidden" name="scheduleid" value="{{ $id }}">
+                            <button type="submit" class="btn-primary btn" style="display:flex;justify-content:center;align-items:center;margin:10px;padding:10px;background-color:#990000;border:none;"><font class="tn-in-text" style="color:white;">&nbsp;Yes, Delete Session&nbsp;</font></button>
+                        </form>&nbsp;&nbsp;&nbsp;
+                        <a href="{{ url('/student/schedule') }}" class="non-style-link"><button class="btn-primary-soft btn" style="display:flex;justify-content:center;align-items:center;margin:10px;padding:10px;"><font class="tn-in-text">&nbsp;&nbsp;Cancel&nbsp;&nbsp;</font></button></a>
+                    </div>
+                </center>
+            </div>
+        </div>
+   @endif
+
+<!-- EmailJS Scripts for Frontend Notification Dispatch -->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<script type="text/javascript">
+    (function(){
+        // Initialize EmailJS with the Public Key from Laravel's .env
+        emailjs.init("{{ env('EMAILJS_USER_ID') }}");
+    })();
+
+    function sendEmailJSAndBook(event, facultyName, studentName, facultyEmail, sessionTitle, sessionDate, sessionTime, bookingUrl) {
+        event.preventDefault(); // Stop the link from redirecting immediately
+        
+        let button = event.currentTarget.querySelector('button');
+        let originalText = button.innerHTML;
+        button.innerHTML = "<font class='tn-in-text'>Sending...</font>";
+        button.disabled = true;
+
+        var templateParams = {
+            faculty_name: facultyName,
+            student_name: studentName,
+            to_email: facultyEmail,
+            session_title: sessionTitle,
+            date: sessionDate,
+            time: sessionTime
+        };
+
+        let serviceId = "{{ env('EMAILJS_SERVICE_ID') }}";
+        let templateId = "{{ env('EMAILJS_TEMPLATE_ID') }}";
+
+        // Call the EmailJS SDK
+        emailjs.send(serviceId, templateId, templateParams)
+            .then(function(response) {
+                console.log('SUCCESS!', response.status, response.text);
+                
+                // Log the notification to the backend database before redirecting
+                fetch("{{ route('notifications.log') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        user_id: '{{ $useremail }}', // Using email as the identifier to match the session
+                        user_type: 'student',
+                        title: 'Booking Email Sent',
+                        message: 'Successfully sent booking request email to ' + facultyName + ' for ' + sessionDate + ' at ' + sessionTime
+                    })
+                }).then(() => {
+                    // Redirect to the actual booking URL now that the email is on its way
+                    window.location.href = bookingUrl;
+                }).catch(() => {
+                    // Even if logging fails, redirect to complete booking
+                    window.location.href = bookingUrl;
+                });
+
+            }, function(error) {
+                console.log('FAILED...', error);
+                alert("The notification failed to send, but we will still proceed with the booking.");
+                
+                fetch("{{ route('notifications.log') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        user_id: '{{ $useremail }}',
+                        user_type: 'student',
+                        title: 'Booking Email Failed',
+                        message: 'Failed to send automated email to ' + facultyName + '. The system still booked your appointment.'
+                    })
+                }).finally(() => {
+                    window.location.href = bookingUrl;
+                });
+            });
+    }
+</script>
+
+    @include('components.notifications')
 </body>
 </html>

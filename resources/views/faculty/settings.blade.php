@@ -804,5 +804,6 @@ function downloadCSV() {
 }
 
 </script>
+    @include('components.notifications')
 </body>
 </html>

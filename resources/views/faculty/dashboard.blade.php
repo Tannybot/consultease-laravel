@@ -207,5 +207,6 @@
     </div>
 
 
+    @include('components.notifications')
 </body>
 </html>

@@ -438,5 +438,6 @@
     </div>
 @endif
 
+    @include('components.notifications')
 </body>
 </html>

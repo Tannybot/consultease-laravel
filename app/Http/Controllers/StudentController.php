@@ -7,6 +7,7 @@ use App\Models\Student;
 use App\Models\Faculty;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 
 class StudentController extends Controller
 {
@@ -132,10 +133,12 @@ class StudentController extends Controller
         $allFaculties = Faculty::orderBy('facname', 'asc')->get();
         $allTitles = DB::table('schedule')->select('title')->distinct()->get();
 
-        // Get sessions already booked by this student
-        $myBookings = DB::table('appointment')
+        // Get sessions already booked by this student mapping scheduleid -> appoid
+        $myAppointments = DB::table('appointment')
             ->where('pid', $student->sid)
-            ->pluck('scheduleid')->toArray();
+            ->pluck('appoid', 'scheduleid')
+            ->toArray();
+        $myBookings = array_keys($myAppointments);
 
         // Get session capacities
         $scheduleCapacities = DB::table('appointment')
@@ -147,9 +150,10 @@ class StudentController extends Controller
         $error = $request->query('error', '0');
         $id = $request->query('id', '');
         $titleParam = $request->query('title', '');
+        $docParam = $request->query('doc', '');
 
         return view('student.schedule', compact(
-            'student', 'today', 'schedules', 'searchQuery', 'searchType', 'allFaculties', 'allTitles', 'action', 'error', 'id', 'titleParam', 'myBookings', 'scheduleCapacities'
+            'student', 'today', 'schedules', 'searchQuery', 'searchType', 'allFaculties', 'allTitles', 'action', 'error', 'id', 'titleParam', 'docParam', 'myBookings', 'myAppointments', 'scheduleCapacities', 'useremail'
         ));
     }
 
@@ -202,6 +206,42 @@ class StudentController extends Controller
         return redirect()->route('student.schedule', ['action' => 'session-added', 'title' => $title]);
     }
 
+    public function deleteSession(Request $request)
+    {
+        $scheduleid = $request->input('scheduleid');
+
+        // Delete the schedule session row
+        DB::table('schedule')->where('scheduleid', $scheduleid)->delete();
+
+        // Also cascade delete any appointments tied to this session block
+        DB::table('appointment')->where('scheduleid', $scheduleid)->delete();
+
+        return redirect()->back()->with('success', 'Session completely deleted.');
+    }
+
+    public function deleteAppointment(Request $request)
+    {
+        $appoid = $request->input('appoid');
+
+        // Find the appointment first to get its schedule ID
+        $appointment = DB::table('appointment')->where('appoid', $appoid)->first();
+
+        if ($appointment) {
+            $scheduleid = $appointment->scheduleid;
+
+            // Delete the student's booking
+            DB::table('appointment')->where('appoid', $appoid)->delete();
+
+            // If this was the only student booked for this schedule session, delete the session block entirely
+            $remainingBookings = DB::table('appointment')->where('scheduleid', $scheduleid)->count();
+            if ($remainingBookings == 0) {
+                DB::table('schedule')->where('scheduleid', $scheduleid)->delete();
+            }
+        }
+
+        return redirect()->back()->with('success', 'Appointment successfully cancelled.');
+    }
+
     public function appointment(Request $request)
     {
         $useremail = Session::get('user');
@@ -231,18 +271,14 @@ class StudentController extends Controller
         $titleParam = $request->query('title', '');
         $docParam = $request->query('doc', '');
 
-        // Handle dropping
-        if ($action == 'drop' && !empty($id)) {
-            // Drop logic
-            DB::table('appointment')->where('appoid', $id)->delete();
-            return redirect()->route('student.appointment');
-        }
-
         // Handle booking
         if ($action == 'add' && !empty($id)) {
             // Get the schedule
             $schedule = DB::table('schedule')->where('scheduleid', $id)->first();
             if ($schedule) {
+                // Get the faculty member to send email to
+                $faculty = DB::table('faculty')->where('facid', $schedule->facid)->first();
+
                 // Determine the next appointment number
                 // Count current appointments for this schedule
                 $currentApptCount = DB::table('appointment')->where('scheduleid', $id)->count();
@@ -273,7 +309,7 @@ class StudentController extends Controller
                 ]);
 
                 // redirect to success or just the bookings page
-                return redirect()->route('student.appointment');
+                return redirect()->route('student.appointment')->with('success', 'Appointment booked successfully! Faculty has been notified.');
             }
         }
 

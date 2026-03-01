@@ -540,5 +540,6 @@
             // Optionally clear URL parameters if wanted
         }
     </script>
+    @include('components.notifications')
 </body>
 </html>

@@ -245,9 +245,6 @@
                             </tr>
                         </table>
                     </td>
-                <tr>
-            </table>
-        </div>
-    </div>
+    @include('components.notifications')
 </body>
 </html>

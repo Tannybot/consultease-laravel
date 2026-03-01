@@ -322,5 +322,6 @@
         </div>
     @endif
 </div>
+    @include('components.notifications')
 </body>
 </html>

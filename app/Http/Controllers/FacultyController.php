@@ -162,7 +162,13 @@ class FacultyController extends Controller
     public function deleteSession(Request $request)
     {
         $id = $request->input('id');
+
+        // Cascade delete any appointments tied to this session block
+        DB::table('appointment')->where('scheduleid', $id)->delete();
+
+        // Delete the schedule session row itself
         DB::table('schedule')->where('scheduleid', $id)->delete();
+
         return redirect()->route('faculty.schedule');
     }
 
