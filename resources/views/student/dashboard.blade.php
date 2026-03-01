@@ -30,7 +30,7 @@
                         <table border="0" class="profile-container">
                             <tr>
                                 <td width="30%" style="padding-left:20px" >
-                                    <img src="{{ asset('img/user.png') }}" alt="Profile" style="width: 91.85px; height: 91.85px; border-radius:50%">
+                                    <img src="{{ $student->profile_pic ? asset('storage/' . $student->profile_pic) : asset('img/user.png') }}" alt="Profile" style="width: 91.85px; height: 91.85px; object-fit: cover; border-radius:50%">
                                 </td>
                                 <td style="padding:0px;margin:0px;">
                                     <p class="profile-title">{{ substr($student->sname,0,13) }}..</p>

@@ -132,13 +132,24 @@ class StudentController extends Controller
         $allFaculties = Faculty::orderBy('facname', 'asc')->get();
         $allTitles = DB::table('schedule')->select('title')->distinct()->get();
 
+        // Get sessions already booked by this student
+        $myBookings = DB::table('appointment')
+            ->where('pid', $student->sid)
+            ->pluck('scheduleid')->toArray();
+
+        // Get session capacities
+        $scheduleCapacities = DB::table('appointment')
+            ->select('scheduleid', DB::raw('count(*) as total'))
+            ->groupBy('scheduleid')
+            ->pluck('total', 'scheduleid')->toArray();
+
         $action = $request->query('action', '');
         $error = $request->query('error', '0');
         $id = $request->query('id', '');
         $titleParam = $request->query('title', '');
 
         return view('student.schedule', compact(
-            'student', 'today', 'schedules', 'searchQuery', 'searchType', 'allFaculties', 'allTitles', 'action', 'error', 'id', 'titleParam'
+            'student', 'today', 'schedules', 'searchQuery', 'searchType', 'allFaculties', 'allTitles', 'action', 'error', 'id', 'titleParam', 'myBookings', 'scheduleCapacities'
         ));
     }
 
@@ -227,6 +238,45 @@ class StudentController extends Controller
             return redirect()->route('student.appointment');
         }
 
+        // Handle booking
+        if ($action == 'add' && !empty($id)) {
+            // Get the schedule
+            $schedule = DB::table('schedule')->where('scheduleid', $id)->first();
+            if ($schedule) {
+                // Determine the next appointment number
+                // Count current appointments for this schedule
+                $currentApptCount = DB::table('appointment')->where('scheduleid', $id)->count();
+
+                // Check if student already booked this schedule
+                $alreadyBooked = DB::table('appointment')
+                    ->where('scheduleid', $id)
+                    ->where('pid', $student->sid)
+                    ->exists();
+
+                if ($alreadyBooked) {
+                    return redirect()->route('student.schedule')->with('error', 'You have already booked this session.');
+                }
+
+                // Check limit (nop)
+                if ($currentApptCount >= $schedule->nop) {
+                    return redirect()->route('student.schedule')->with('error', 'This session is already full.');
+                }
+
+                $apponum = $currentApptCount + 1;
+
+                DB::table('appointment')->insert([
+                    'pid' => $student->sid,
+                    'apponum' => $apponum,
+                    'scheduleid' => $id,
+                    'appodate' => $today,
+                    'status' => 'booked' // default status for a new booking
+                ]);
+
+                // redirect to success or just the bookings page
+                return redirect()->route('student.appointment');
+            }
+        }
+
         return view('student.appointment', compact(
             'student', 'today', 'appointments', 'action', 'id', 'titleParam', 'docParam'
         ));
@@ -268,6 +318,18 @@ class StudentController extends Controller
         $password = $request->input('password');
         $cpassword = $request->input('cpassword');
 
+        $updateData = [
+            'sname' => $name,
+            'spassword' => $password,
+            'stel' => $tele,
+            'saddress' => $address
+        ];
+
+        if ($request->hasFile('profile_pic')) {
+            $path = $request->file('profile_pic')->store('profile_pictures', 'public');
+            $updateData['profile_pic'] = $path;
+        }
+
         if ($password == $cpassword) {
             $error = '3';
             // Check if email already exists
@@ -280,13 +342,8 @@ class StudentController extends Controller
                     $error = '1';
                 }
                 else {
-                    DB::table('student')->where('sid', $id)->update([
-                        'semail' => $email,
-                        'sname' => $name,
-                        'spassword' => $password,
-                        'stel' => $tele,
-                        'saddress' => $address
-                    ]);
+                    $updateData['semail'] = $email;
+                    DB::table('student')->where('sid', $id)->update($updateData);
 
                     DB::table('webuser')->where('email', $oldemail)->update([
                         'email' => $email
@@ -295,13 +352,8 @@ class StudentController extends Controller
                 }
             }
             else {
-                DB::table('student')->where('sid', $id)->update([
-                    'semail' => $email,
-                    'sname' => $name,
-                    'spassword' => $password,
-                    'stel' => $tele,
-                    'saddress' => $address
-                ]);
+                $updateData['semail'] = $email;
+                DB::table('student')->where('sid', $id)->update($updateData);
 
                 DB::table('webuser')->where('email', $oldemail)->update([
                     'email' => $email

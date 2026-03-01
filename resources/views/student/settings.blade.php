@@ -29,7 +29,7 @@
                     <table border="0" class="profile-container">
                         <tr>
                             <td width="30%" style="padding-left:20px" >
-                                <img src="{{ asset('img/user.png') }}" alt="User Icon" style="width: 91.85px; height: 91.85px; border-radius:50%">
+                                <img src="{{ $student->profile_pic ? asset('storage/' . $student->profile_pic) : asset('img/user.png') }}" alt="User Icon" style="width: 91.85px; height: 91.85px; object-fit: cover; border-radius:50%">
                             </td>
                             <td style="padding:0px;margin:0px;">
                                 <p class="profile-title">{{ substr($student->sname,0,13) }}..</p>
@@ -327,7 +327,7 @@
                             </tr>
                             <tr>
                                 <td class="label-td" colspan="2">
-                                    <form action="{{ url('/student/settings/edit') }}" method="POST" class="add-new-form">
+                                    <form action="{{ url('/student/settings/edit') }}" method="POST" class="add-new-form" enctype="multipart/form-data">
                                         @csrf
                                         <label for="Email" class="form-label">Email: </label>
                                         <input type="hidden" value="{{ $id }}" name="id00">
@@ -337,6 +337,16 @@
                                 <td class="label-td" colspan="2">
                                     <input type="hidden" name="oldemail" value="{{ $viewStudent->semail }}" >
                                     <input type="email" name="email" class="input-text" placeholder="Email Address" value="{{ $viewStudent->semail }}" required><br>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label-td" colspan="2">
+                                    <label for="profile_pic" class="form-label">Profile Picture: </label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label-td" colspan="2">
+                                    <input type="file" name="profile_pic" class="input-text" accept="image/*"><br>
                                 </td>
                             </tr>
                             <tr>

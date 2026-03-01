@@ -27,7 +27,7 @@
                     <table border="0" class="profile-container">
                         <tr>
                             <td width="30%" style="padding-left:20px" >
-                                <img src="{{ asset('img/user.png') }}" alt="" style="width: 91.85px; height: 91.85px; border-radius:50%">
+                                <img src="{{ $student->profile_pic ? asset('storage/' . $student->profile_pic) : asset('img/user.png') }}" alt="" style="width: 91.85px; height: 91.85px; object-fit: cover; border-radius:50%">
                             </td>
                             <td style="padding:0px;margin:0px;">
                                 <p class="profile-title">{{ substr($student->sname,0,13) }}..</p>
@@ -123,6 +123,18 @@
                     </div>
                 </td>
             </tr>
+            
+            @if(session('error'))
+            <tr>
+                <td colspan="4" style="padding-top:20px;">
+                    <center>
+                        <div style="color:rgb(255, 62, 62);font-weight:bold;background-color:#ffe0e0;padding:10px;border-radius:5px;width:80%;">
+                            {{ session('error') }}
+                        </div>
+                    </center>
+                </td>
+            </tr>
+            @endif
 
             <tr>
                 <td colspan="4" style="padding-top:10px;width: 100%;" >
@@ -164,8 +176,23 @@
                                             <div class="h1-search">{{ substr($sched->title,0,21) }}</div><br>
                                             <div class="h3-search">{{ substr($sched->facname,0,30) }}</div>
                                             <div class="h4-search">{{ $sched->scheduledate }}<br>Starts: <b>@ {{ substr($sched->scheduletime,0,5) }}</b> (24h)</div>
+                                            <div class="h4-search" style="margin-top: 5px;">
+                                                @php $currentBookings = isset($scheduleCapacities[$sched->scheduleid]) ? $scheduleCapacities[$sched->scheduleid] : 0; @endphp
+                                                Capacity: {{ $currentBookings }} / {{ $sched->nop }}
+                                            </div>
                                             <br>
-                                            <a href="{{ url('/student/appointment?action=add&id='.$sched->scheduleid) }}" ><button  class="login-btn btn-primary-soft btn "  style="padding-top:11px;padding-bottom:11px;width:100%"><font class="tn-in-text">Book Now</font></button></a>
+                                            @php
+                                                $isBooked = in_array($sched->scheduleid, $myBookings);
+                                                $isFull = $currentBookings >= $sched->nop;
+                                            @endphp
+
+                                            @if($isBooked)
+                                                <button class="login-btn btn " style="padding-top:11px;padding-bottom:11px;width:100%;background-color:#e0e0e0;color:#666;cursor:not-allowed;" disabled><font class="tn-in-text">Already Booked</font></button>
+                                            @elseif($isFull)
+                                                <button class="login-btn btn " style="padding-top:11px;padding-bottom:11px;width:100%;background-color:#ffe0e0;color:#cc0000;cursor:not-allowed;" disabled><font class="tn-in-text">Session Full</font></button>
+                                            @else
+                                                <a href="{{ url('/student/appointment?action=add&id='.$sched->scheduleid) }}" ><button  class="login-btn btn-primary-soft btn "  style="padding-top:11px;padding-bottom:11px;width:100%"><font class="tn-in-text">Book Now</font></button></a>
+                                            @endif
                                         </div>
                                     </div>
                                 </td>

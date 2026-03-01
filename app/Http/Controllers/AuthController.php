@@ -8,6 +8,7 @@ use App\Models\Admin;
 use App\Models\Faculty;
 use App\Models\Student;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\DB;
 
 class AuthController extends Controller
 {
@@ -141,13 +142,22 @@ class AuthController extends Controller
 
         $name = $request->input('fname') . " " . $request->input('lname');
         $email = $request->input('newemail');
+        $subjectName = $request->input('subject');
+
+        $existingSubject = DB::table('subject')->where('sname', $subjectName)->first();
+        if ($existingSubject) {
+            $subjectId = $existingSubject->id;
+        }
+        else {
+            $subjectId = DB::table('subject')->insertGetId(['sname' => $subjectName]);
+        }
 
         Faculty::insert([
             'facemail' => $email,
             'facname' => $name,
             'facpassword' => $request->input('newpassword'),
             'factel' => $request->input('tele'),
-            'subject' => $request->input('subject')
+            'subject' => $subjectId
         ]);
 
         WebUser::insert([

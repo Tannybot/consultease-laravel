@@ -27,7 +27,7 @@
                      <table border="0" class="profile-container">
                          <tr>
                              <td width="30%" style="padding-left:20px" >
-                                 <img src="{{ asset('img/user.png') }}" alt="" style="width: 91.85px; height: 91.85px; border-radius:50%">
+                                 <img src="{{ $faculty->profile_pic ? asset('storage/' . $faculty->profile_pic) : asset('img/user.png') }}" alt="" style="width: 91.85px; height: 91.85px; object-fit: cover; border-radius:50%">
                              </td>
                              <td style="padding:0px;margin:0px;">
                                  <p class="profile-title">{{ substr($faculty->facname,0,13) }}..</p>

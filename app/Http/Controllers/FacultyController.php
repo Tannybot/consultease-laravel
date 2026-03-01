@@ -278,19 +278,24 @@ class FacultyController extends Controller
             $password = $request->input('password');
             $cpassword = $request->input('cpassword');
 
+            $updateData = [
+                'facname' => $name,
+                'facpassword' => $password,
+                'factel' => $tele,
+                'subject' => $spec
+            ];
+
+            if ($request->hasFile('profile_pic')) {
+                $path = $request->file('profile_pic')->store('profile_pictures', 'public');
+                $updateData['profile_pic'] = $path;
+            }
+
             if ($password == $cpassword) {
                 $existingUser = DB::table('webuser')->where('email', $email)->first();
                 if ($existingUser == null || $email == $oldemail) {
                     DB::table('webuser')->where('email', $oldemail)->update(['email' => $email]);
-                    DB::table('faculty')
-                        ->where('facid', $id)
-                        ->update([
-                        'facemail' => $email,
-                        'facname' => $name,
-                        'facpassword' => $password,
-                        'factel' => $tele,
-                        'subject' => $spec
-                    ]);
+                    $updateData['facemail'] = $email;
+                    DB::table('faculty')->where('facid', $id)->update($updateData);
                     Session::put('user', $email);
                     return redirect('/faculty/settings?action=edit&id=' . $id . '&error=4');
                 }

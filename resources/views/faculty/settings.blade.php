@@ -145,7 +145,7 @@
                         <table border="0" class="profile-container">
                             <tr>
                                 <td width="30%" style="padding-left:20px" >
-                                    <img src="{{ asset('img/user.png') }}" alt="" style="width: 91.85px; height: 91.85px; border-radius:50%">
+                                    <img src="{{ $faculty->profile_pic ? asset('storage/' . $faculty->profile_pic) : asset('img/user.png') }}" alt="" style="width: 91.85px; height: 91.85px; object-fit: cover; border-radius:50%">
                                 </td>
                                 <td style="padding:0px;margin:0px;">
                                     <p class="profile-title">{{ substr($faculty->facname,0,13) }}..</p>
@@ -589,7 +589,7 @@
                         </tr>
                         <tr>
                             <td class="label-td" colspan="2">
-                                <form action="{{ route('faculty.settings.edit') }}" method="POST" class="add-new-form">
+                                <form action="{{ route('faculty.settings.edit') }}" method="POST" class="add-new-form" enctype="multipart/form-data">
                                 @csrf
                                 <label for="Email" class="form-label">Email: </label>
                                 <input type="hidden" value="{{ $faculty->facid }}" name="id00">
@@ -599,6 +599,16 @@
                             <td class="label-td" colspan="2">
                             <input type="hidden" name="oldemail" value="{{ $faculty->facemail }}" >
                             <input type="email" name="email" class="input-text" placeholder="Email Address" value="{{ $faculty->facemail }}" required><br>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label-td" colspan="2">
+                                <label for="profile_pic" class="form-label">Profile Picture: </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label-td" colspan="2">
+                                <input type="file" name="profile_pic" class="input-text" accept="image/*"><br>
                             </td>
                         </tr>
                         <tr>
@@ -648,7 +658,6 @@
                                 <label for="cpassword" class="form-label">Confirm Password: </label>
                             </td>
                         </tr>
-                        <tr>
                             <td class="label-td" colspan="2">
                                 <input type="password" name="cpassword" class="input-text" placeholder="Confirm Password" required><br>
                             </td>

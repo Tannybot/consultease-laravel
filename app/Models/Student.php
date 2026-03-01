@@ -13,5 +13,5 @@ class Student extends Model
     protected $primaryKey = 'sid';
     public $timestamps = false;
 
-    protected $fillable = ['semail', 'sname', 'spassword', 'saddress', 'snic', 'sdob', 'stel'];
+    protected $fillable = ['semail', 'sname', 'spassword', 'saddress', 'snic', 'sdob', 'stel', 'profile_pic'];
 }

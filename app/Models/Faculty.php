@@ -13,5 +13,5 @@ class Faculty extends Model
     protected $primaryKey = 'facid';
     public $timestamps = false;
 
-    protected $fillable = ['facemail', 'facname', 'facpassword', 'factel', 'subject'];
+    protected $fillable = ['facemail', 'facname', 'facpassword', 'factel', 'subject', 'profile_pic'];
 }
