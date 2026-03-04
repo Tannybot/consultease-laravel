@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -17,6 +17,7 @@
             animation: transitionIn-Y-bottom 0.5s;
         }
 </style>
+    <link href="{{ asset('css/responsive.css') }}" rel="stylesheet">
 </head>
 <body>
     <div class="container">
@@ -79,83 +80,80 @@
 
             </table>
         </div>
-        <div class="dash-body">
-            <table border="0" width="100%" style=" border-spacing: 0;margin:0;padding:0;margin-top:25px; ">
-                <tr >
-                    <td width="13%">
-                        <a href="{{ url('/admin/dashboard') }}" ><button  class="login-btn btn-primary-soft btn btn-icon-back"  style="padding-top:11px;padding-bottom:11px;margin-left:20px;width:125px"><font class="tn-in-text">Back</font></button></a>
-                    </td>
-                    <td>
-                        
-                        <form action="{{ url('/admin/faculty') }}" method="post" class="header-search">
-                            @csrf
-                            <input type="search" name="search" class="input-text header-searchbar" placeholder="Search Faculty name or Email" list="faculty">&nbsp;&nbsp;
+                <div class="dash-body" style="margin-top: 15px">
+
+            {{-- ── Top header bar ── --}}
+            <div class="admin-header-bar" style="justify-content: space-between;">
+                <div class="back-cell" style="display: flex; align-items: center; gap: 15px;">
+                    <a href="{{ url('/admin/dashboard') }}" ><button  class="login-btn btn-primary-soft btn btn-icon-back"  style="padding-top:11px;padding-bottom:11px;margin-left:20px;width:125px"><font class="tn-in-text">Back</font></button></a>
+                </div>
+                
+                <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px;">
+                    <div class="date-cell">
+                        <p style="font-size:13px;color:rgb(119,119,119);margin:0;text-align:right;">Today's Date</p>
+                        <p class="heading-sub12" style="margin:0;text-align:right;font-weight: 600;">{{ $today }}</p>
+                    </div>
+                    <div class="cal-cell">
+                        <button class="btn-label" style="display:flex;justify-content:center;align-items:center;">
+                            <img src="{{ asset('img/calendar.svg') }}" width="28">
+                        </button>
+                    </div>
+                </div>
+
+                <div class="search-cell" style="flex: 1 1 100%; margin-top: 5px;">
+                    <form action="{{ url('/admin/faculty') }}" method="post" class="header-search" style="margin: 0;">
+                        @csrf
+                        <div style="display: flex; flex-wrap: nowrap; gap: 8px; width: 100%; padding: 0 10px;">
+                            <input type="search" name="search" class="input-text header-searchbar" placeholder="Search Faculty name or Email" list="faculty" style="flex: 1;">
                             <datalist id="faculty">
                                 @foreach($facultyList as $fac)
                                     <option value="{{ $fac->facname }}"></option>
                                     <option value="{{ $fac->facemail }}"></option>
                                 @endforeach
                             </datalist>
-                       
-                            <input type="Submit" value="Search" class="login-btn btn-primary btn" style="padding-left: 25px;padding-right: 25px;padding-top: 10px;padding-bottom: 10px;">
-                        
-                        </form>
-                        
-                    </td>
-                    <td width="15%">
-                        <p style="font-size: 14px;color: rgb(119, 119, 119);padding: 0;margin: 0;text-align: right;">
-                            Today's Date
-                        </p>
-                        <p class="heading-sub12" style="padding: 0;margin: 0;">
-                            {{ $today }}
-                        </p>
-                    </td>
-                    <td width="10%">
-                        <button  class="btn-label"  style="display: flex;justify-content: center;align-items: center;"><img src="{{ asset('img/calendar.svg') }}" width="100%"></button>
-                    </td>
+                            <input type="Submit" value="Search" class="btn btn-primary-soft" style="padding: 10px 20px; flex: 0 0 auto;">
+                        </div>
+                    </form>
+                </div>
+            </div>
 
-                </tr>
-               
-                <tr >
-                    <td colspan="2" style="padding-top:30px;">
-                        <p class="heading-main12" style="margin-left: 45px;font-size:20px;color:rgb(49, 49, 49)">Add New Faculty</p>
-                    </td>
-                    <td colspan="2">
-                        <a href="?action=add&id=none&error=0" class="non-style-link"><button  class="login-btn btn-primary btn button-icon"  style="display: flex;justify-content: center;align-items: center;margin-left:75px;background-image: url('{{ asset('img/icons/add.svg') }}');">Add New</button>
-                            </a></td>
-                </tr>
-                <tr>
-                    <td colspan="4" style="padding-top:10px;">
-                        <p class="heading-main12" style="margin-left: 45px;font-size:18px;color:rgb(49, 49, 49)">All Faculty ({{ $faculties->count() }})</p>
-                    </td>
-                </tr>
-                  
-                <tr>
-                   <td colspan="4">
-                       <center>
-                        <div class="abc scroll">
-                        <table width="93%" class="sub-table scrolldown" border="0">
+            {{-- ── Title & Add New Panel ── --}}
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 20px 20px; flex-wrap: wrap; gap: 15px;">
+                <div class="admin-home-title" style="padding: 0;">
+                    @include('components.hamburger')
+                    <p>Faculty Management</p>
+                </div>
+                <a href="?action=add&id=none&error=0" class="non-style-link">
+                    <button class="login-btn btn-primary btn button-icon" style="display: flex;justify-content: center;align-items: center; background-image: url('{{ asset('img/icons/add.svg') }}'); padding-left: 35px;">Add New Faculty</button>
+                </a>
+            </div>
+
+            {{-- ── Main Data Panel ── --}}
+            <div style="padding: 0 20px 20px;">
+                <div class="db-panel">
+                    <p class="db-heading-appo" style="padding: 5px 10px 15px; margin: 0; font-size: 18px;">All Faculty ({{ $faculties->count() }})</p>
+                    
+                    <div class="abc scroll" style="height: auto; max-height: 60vh;">
+                        <table width="100%" class="sub-table scrolldown" border="0" style="margin: 0;">
                         <thead>
                         <tr>
                                 <th class="table-headin">Faculty Name</th>
                                 <th class="table-headin">Email</th>
                                 <th class="table-headin">Subject</th>
-                                <th class="table-headin">Events</th>
+                                <th class="table-headin" style="text-align: center !important;">Events</th>
                         </tr>
                         </thead>
                         <tbody>
                             @if($faculties->count() == 0)
                                 <tr>
                                     <td colspan="4">
-                                    <br><br><br><br>
-                                    <center>
-                                    <img src="{{ asset('img/notfound.svg') }}" width="25%">
-                                    <br>
-                                    <p class="heading-main12" style="margin-left: 45px;font-size:20px;color:rgb(49, 49, 49)">We couldnt find anything related to your keywords !</p>
-                                    <a class="non-style-link" href="{{ url('/admin/faculty') }}"><button  class="login-btn btn-primary-soft btn"  style="display: flex;justify-content: center;align-items: center;margin-left:20px;">&nbsp; Show all Faculty &nbsp;</button>
-                                    </a>
-                                    </center>
-                                    <br><br><br><br>
+                                        <div class="db-empty" style="padding: 40px 12px;">
+                                            <img src="{{ asset('img/notfound.svg') }}">
+                                            <p style="font-size: 16px; font-weight: 500;">We couldn't find anything related to your keywords!</p>
+                                            <a class="non-style-link" href="{{ url('/admin/faculty') }}">
+                                                <button class="login-btn btn-primary-soft btn" style="display: flex;justify-content: center;align-items: center; margin: 0 auto;">&nbsp; Show all Faculty &nbsp;</button>
+                                            </a>
+                                        </div>
                                     </td>
                                 </tr>
                             @else
@@ -180,10 +178,8 @@
 
                         </table>
                         </div>
-                        </center>
-                   </td> 
-                </tr>
-            </table>
+                </div>
+            </div>
         </div>
     </div>
     

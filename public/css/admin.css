@@ -37,6 +37,7 @@
     overflow-y: auto;
     background: #f8f9fa;
     padding: 12px 16px 16px;
+    box-sizing: border-box;
     animation: fadeIn 0.5s ease-out;
 }
 
@@ -176,22 +177,18 @@
         position: fixed;
         top: 0;
         left: -300px;
-        /* Hidden off-screen by default */
         width: 280px !important;
         height: 100vh;
         z-index: 9999;
         border-right: 1px solid rgba(255, 255, 255, 0.15);
         transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        /* Sexy slide animation */
         box-shadow: 5px 0 15px rgba(0, 0, 0, 0.5);
     }
 
-    /* Class added by JS to slide the drawer in */
     .menu.open {
         left: 0;
     }
 
-    /* The Hamburger Button injected into the top headers */
     .hamburger-btn {
         display: inline-flex;
         background: var(--primarycolor);
@@ -211,7 +208,6 @@
         transform: scale(0.95);
     }
 
-    /* A semi-transparent overlay to tap out of the menu */
     .menu-overlay {
         display: none;
         position: fixed;
@@ -230,7 +226,6 @@
         opacity: 1;
     }
 
-    /* Unhide profile pieces if they were hidden by the Bottom Tab previously */
     .menu-container>tbody>tr:first-child,
     .profile-container {
         display: table-row !important;
@@ -244,9 +239,50 @@
         width: 100%;
         height: auto;
         padding: 10px;
+        box-sizing: border-box;
     }
 
     .header-searchbar {
         width: 90%;
+    }
+
+    .heading-main12 {
+        font-size: 20px;
+    }
+
+    .heading-sub12 {
+        font-size: 16px;
+    }
+}
+
+/* ---- 480px breakpoint ---- */
+@media screen and (max-width: 480px) {
+    .hamburger-btn {
+        padding: 6px 10px;
+        font-size: 18px;
+    }
+
+    .profile-title {
+        font-size: 14px;
+    }
+
+    .profile-subtitle {
+        font-size: 11px;
+    }
+
+    .dash-body {
+        padding: 8px;
+    }
+
+    .header-searchbar {
+        width: 95%;
+    }
+
+    .heading-main12 {
+        font-size: 16px;
+    }
+
+    .heading-sub12 {
+        font-size: 13px;
     }
 }

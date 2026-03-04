@@ -7,11 +7,21 @@
   --primarylight: #e8f5e9;
   --btnice: #c8e6c9;
   --btnnicetext: #1b5e20;
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.07);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.09);
   --shadow-lg: 0 8px 25px rgba(0, 0, 0, 0.12);
-  --radius: 8px;
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(0, 0, 0, 0.04);
+  --radius: 10px;
+  --radius-sm: 6px;
+  --radius-lg: 14px;
   --transition: all 0.3s ease;
+  /* 8px spacing system */
+  --sp-1: 8px;
+  --sp-2: 16px;
+  --sp-3: 24px;
+  --sp-4: 32px;
+  --sp-5: 40px;
+  --sp-6: 48px;
 }
 
 body {
@@ -169,13 +179,30 @@ body {
 
 
 .sub-table {
-  border: 1px solid #ebebeb;
+  border: 1px solid #efefef;
   border-radius: var(--radius);
-  padding: 8px;
+  padding: var(--sp-1);
+  overflow: hidden;
+}
+
+.sub-table thead th {
+  text-align: left;
+  padding: var(--sp-1) var(--sp-2);
+}
+
+.sub-table tbody td {
+  text-align: left;
+  padding: var(--sp-1) var(--sp-2);
+  vertical-align: middle;
 }
 
 .sub-table tbody tr {
   transition: background-color 0.2s ease, transform 0.15s ease;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.sub-table tbody tr:last-child {
+  border-bottom: none;
 }
 
 .sub-table tbody tr:hover {
@@ -183,12 +210,15 @@ body {
 }
 
 .filter-container {
-  width: 95%;
+  width: 100%;
   border: 1px solid #ebebeb;
   border-radius: var(--radius);
-  margin-bottom: 12px;
+  margin-bottom: var(--sp-2);
   border-spacing: 0;
-  padding: 4px 8px;
+  padding: var(--sp-1) var(--sp-2);
+  box-sizing: border-box;
+  box-shadow: var(--shadow-card);
+  background: #fff;
 }
 
 .filter-container-items {
@@ -211,8 +241,32 @@ body {
   width: 100%;
   height: 550px;
   overflow: auto;
-  padding: 8px;
+  padding: var(--sp-1);
   box-sizing: border-box;
+}
+
+/* ── Table data left-alignment ──────────────────────────────── */
+.sub-table th,
+.sub-table td {
+  text-align: left;
+}
+
+/* Date column: right on desktop, stacks on mobile */
+.date-col {
+  text-align: right;
+  white-space: nowrap;
+  color: #555;
+  font-size: 13px;
+}
+
+@media screen and (max-width: 768px) {
+  .date-col {
+    text-align: left;
+    display: block;
+    font-size: 12px;
+    color: #888;
+    padding-top: 2px;
+  }
 }
 
 
@@ -529,10 +583,12 @@ input[type=search]:focus {
 
 
 .dashboard-items {
-  border: 1.5px solid #e0e0e0;
+  border: 1px solid #e8e8e8;
   border-radius: var(--radius);
   color: var(--primarycolor);
   background: #fff;
+  box-shadow: var(--shadow-card);
+  padding: var(--sp-2) !important;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   animation: fadeInUp 0.5s ease-out both;
 }
@@ -606,8 +662,8 @@ input[type=search]:focus {
 
 .search-items {
   padding: 12px;
-  margin: 5px;
-  width: 95%;
+  margin: 5px 0;
+  width: 100%;
   display: flex;
   padding-left: 15px;
   box-sizing: border-box;
@@ -746,7 +802,7 @@ input[type=search]:focus {
   }
 
   .h1-dashboard {
-    font-size: 20px;
+    font-size: 22px;
   }
 
   .h3-dashboard {
@@ -762,16 +818,16 @@ input[type=search]:focus {
   }
 
   .dashboard-icons {
-    padding-top: 20px;
-    padding-bottom: 20px;
-    margin-left: 10px;
-    margin-right: 10px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    margin-left: 6px;
+    margin-right: 6px;
   }
 
   .search-items {
-    padding: 15px;
-    margin: 5px;
-    width: 95%;
+    padding: 12px;
+    margin: 5px 0;
+    width: 100%;
   }
 
   .h1-search {
@@ -789,19 +845,12 @@ input[type=search]:focus {
   .popup {
     width: 95% !important;
     margin: 20px auto;
-    max-height: 80vh;
+    max-height: 85vh;
     overflow-y: auto;
   }
 
   .overlay:target .popup {
     margin: 20px auto;
-  }
-
-  /* Force buttons to be comfortable touch targets */
-  .btn {
-    width: 100%;
-    margin-bottom: 10px;
-    padding: 15px !important;
   }
 
   /* Make sure the main dashboard widgets stack cleanly */
@@ -815,24 +864,20 @@ input[type=search]:focus {
     margin: 0 !important;
   }
 
-  .h1-dashboard {
-    font-size: 24px !important;
-  }
-
   .form-row {
     flex-direction: column;
     gap: 0;
   }
 
-  /* Force main layout tables into block elements so they stack on mobile */
-  table[width="100%"] {
+  /* Force main layout tables into block elements so they stack on mobile, EXCEPT data sub-tables */
+  table[width="100%"]:not(.sub-table) {
     display: block !important;
     width: 100% !important;
   }
 
-  table[width="100%"]>tbody,
-  table[width="100%"]>tbody>tr,
-  table[width="100%"]>tbody>tr>td {
+  table[width="100%"]:not(.sub-table)>tbody,
+  table[width="100%"]:not(.sub-table)>tbody>tr,
+  table[width="100%"]:not(.sub-table)>tbody>tr>td {
     display: block !important;
     width: 100% !important;
   }
@@ -855,7 +900,7 @@ input[type=search]:focus {
   }
 
   /* Make dense data tables (sub-tables) horizontally scrollable */
-  .abc.scroll {
+  .abc {
     height: auto !important;
     max-height: 400px;
     overflow-x: auto !important;
@@ -864,9 +909,7 @@ input[type=search]:focus {
   }
 
   .sub-table {
-    width: 100% !important;
     min-width: 500px;
-    /* Force minimum width to enable scrolling */
   }
 
   /* Make form inner container full width */
@@ -889,6 +932,72 @@ input[type=search]:focus {
 
   .role-options {
     flex-direction: column;
+  }
+}
+
+/* ---- 480px breakpoint ---- */
+@media screen and (max-width: 480px) {
+  .h1-dashboard {
+    font-size: 18px;
+  }
+
+  .h3-dashboard {
+    font-size: 12px;
+  }
+
+  .btn {
+    font-size: 13px;
+    padding: 8px 12px;
+  }
+
+  .table-headin {
+    font-size: 11px;
+    padding: 6px 8px;
+  }
+
+  .search-items {
+    padding: 10px;
+  }
+
+  .h1-search {
+    font-size: 16px;
+  }
+
+  .h3-search {
+    font-size: 13px;
+  }
+
+  .h4-search {
+    font-size: 11px;
+  }
+
+  .popup {
+    width: 100% !important;
+    margin: 10px auto;
+    max-height: 90vh;
+    border-radius: 8px;
+  }
+
+  .notification-panel {
+    width: 100%;
+    right: -100%;
+  }
+
+  .notification-panel.open {
+    right: 0;
+  }
+
+  .form-inner {
+    padding: 8px;
+  }
+
+  .faculty-header {
+    padding: 16px;
+  }
+
+  .dashboard-icons {
+    padding-top: 10px;
+    padding-bottom: 10px;
   }
 }
 

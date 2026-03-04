@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="{{ asset('css/main.css') }}">  
     <link rel="stylesheet" href="{{ asset('css/index.css') }}">
     <title>ConsultEase - Faculty Consultation System</title>
+    <link href="{{ asset('css/responsive.css') }}" rel="stylesheet">
 </head>
 <body>
     <div class="full-height">

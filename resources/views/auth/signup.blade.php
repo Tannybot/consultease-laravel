@@ -11,6 +11,7 @@
 
     <title>Sign Up - ConsultEase</title>
 
+    <link href="{{ asset('css/responsive.css') }}" rel="stylesheet">
 </head>
 <body>
     @include('layouts.livewallpaper')

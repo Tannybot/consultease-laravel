@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="{{ asset('css/livewallpaper.css') }}">
 
     <title>Login</title>
+    <link href="{{ asset('css/responsive.css') }}" rel="stylesheet">
 </head>
 <body>
     @include('layouts.livewallpaper')

@@ -17,6 +17,7 @@
             animation: transitionIn-Y-bottom 0.5s;
         }
     </style>
+    <link href="{{ asset('css/responsive.css') }}" rel="stylesheet">
 </head>
 <body>
     <div class="container">

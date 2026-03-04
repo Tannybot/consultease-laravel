@@ -14,6 +14,7 @@
             animation: transitionIn-X 0.5s;
         }
     </style>
+    <link href="{{ asset('css/responsive.css') }}" rel="stylesheet">
 </head>
 <body>
     <center>

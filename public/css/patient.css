@@ -5,9 +5,6 @@ body {
   margin: 0;
 
   padding: 0
-
-  
-
 }
 
 .container {
@@ -34,7 +31,7 @@ body {
 }
 
 .dash-body {
-  width: calc(100% - 280px);
+  flex: 1;
   height: 100%;
   padding: 16px 28px 28px;
   box-sizing: border-box;
@@ -116,8 +113,7 @@ body {
 
   text-align: left;
 
-  padding: 0
-
+  padding: 0;
   margin: 0;
 
   color: #161c2def;
@@ -234,67 +230,80 @@ body {
 @media screen and (max-width: 768px) {
 
   .container {
-
     flex-direction: column;
-
     height: auto;
-
   }
 
   .menu {
-
     width: 100%;
-
     height: auto;
-
     border-right: none;
-
     border-bottom: 1.5px solid rgb(235, 235, 235);
-
   }
 
   .dash-body {
-
     width: 100%;
-
     height: auto;
-
+    padding: 12px;
+    box-sizing: border-box;
   }
 
   .profile-title {
-
     font-size: 18px;
-
   }
 
   .profile-subtitle {
-
     font-size: 13px;
-
   }
 
   .header-container {
-
     height: 200px;
-
   }
 
   #header-heading {
-
     font-size: 24px;
-
   }
 
   #header-sub-heading {
-
     font-size: 14px;
-
   }
 
   .header-searchbar {
+    width: 85%;
+  }
 
-    width: 80%;
+}
 
+/* ---- 480px breakpoint ---- */
+@media screen and (max-width: 480px) {
+
+  .header-container {
+    height: 160px;
+  }
+
+  #header-heading {
+    font-size: 18px;
+  }
+
+  #header-sub-heading {
+    font-size: 12px;
+  }
+
+  .header-searchbar {
+    width: 95%;
+  }
+
+  .profile-title {
+    font-size: 15px;
+  }
+
+  .profile-subtitle {
+    font-size: 12px;
+  }
+
+  .profile-container {
+    padding-top: 20px;
+    padding-bottom: 20px;
   }
 
 }

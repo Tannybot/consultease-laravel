@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
         
     <title>Profile Settings</title>
+    <link href="{{ asset('css/responsive.css') }}" rel="stylesheet">
 </head>
 <body>
     <div class="container">

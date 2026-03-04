@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -19,6 +19,7 @@
             animation: transitionIn-Y-bottom 0.5s;
         }
     </style>
+    <link href="{{ asset('css/responsive.css') }}" rel="stylesheet">
 </head>
 <body>
 <div class="container">
@@ -83,115 +84,67 @@
         </table>
     </div>
     <div class="dash-body" style="margin-top: 15px">
-        <table border="0" width="100%" style=" border-spacing: 0;margin:0;padding:0;" >
+                <div class="admin-header-bar" style="justify-content: space-between;">
+            <div class="back-cell" style="display: flex; align-items: center; gap: 15px;">
+                <a href="{{ url('/student/dashboard') }}" ><button  class="login-btn btn-primary-soft btn btn-icon-back"  style="padding-top:11px;padding-bottom:11px;margin-left:20px;width:125px"><font class="tn-in-text">Back</font></button></a>
+            </div>
+            
+            <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px;">
+                <div class="date-cell">
+                    <p style="font-size:13px;color:rgb(119,119,119);margin:0;text-align:right;">Today's Date</p>
+                    <p class="heading-sub12" style="margin:0;text-align:right;font-weight: 600;">{{ $today }}</p>
+                </div>
+                <div class="cal-cell">
+                    <button class="btn-label" style="display:flex;justify-content:center;align-items:center;">
+                        <img src="{{ asset('img/calendar.svg') }}" width="28">
+                    </button>
+                </div>
+            </div>
+        </div>
 
-            <tr >
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 20px 20px; flex-wrap: wrap; gap: 15px;">
+            <div class="admin-home-title" style="padding: 0;">
+                @include('components.hamburger')
+                <p>Settings</p>
+            </div>
+        </div>
 
-                <td width="13%" >
-                    <a href="{{ url('/student/dashboard') }}" ><button  class="login-btn btn-primary-soft btn btn-icon-back"  style="padding-top:11px;padding-bottom:11px;margin-left:20px;width:125px"><font class="tn-in-text">Back</font></button></a>
-                </td>
-                <td style="display: flex; align-items: center;">
-                    @include('components.hamburger')
-                    <p style="font-size: 23px;padding-left:12px;font-weight: 600;">Settings</p>
+        <div style="padding: 0 20px 20px;">
+            <div class="db-panel" style="padding: 20px; display: flex; flex-direction: column; gap: 15px;">
+                
+                <a href="?action=edit&id={{ $student->sid }}&error=0" class="non-style-link">
+                    <div class="dashboard-items setting-tabs" style="padding:15px; width: 100%; display: flex; align-items: center; gap: 15px;">
+                        <div class="btn-icon-back dashboard-icons-setting" style="background-image: url('{{ asset('img/icons/faculty-hover.svg') }}'); width: 35px; height: 35px; background-size: cover; background-position: center; border-radius: 8px;"></div>
+                        <div>
+                            <div class="h1-dashboard" style="font-size: 16px; margin: 0; padding: 0;">Account Settings</div>
+                            <div class="h3-dashboard" style="font-size: 12px; margin-top: 5px; font-weight: 500;">Edit your Account Details & Change Password</div>
+                        </div>
+                    </div>
+                </a>
 
-                </td>
+                <a href="?action=view&id={{ $student->sid }}" class="non-style-link">
+                    <div class="dashboard-items setting-tabs" style="padding:15px; width: 100%; display: flex; align-items: center; gap: 15px;">
+                        <div class="btn-icon-back dashboard-icons-setting " style="background-image: url('{{ asset('img/icons/view-iceblue.svg') }}'); width: 35px; height: 35px; background-size: cover; background-position: center; border-radius: 8px;"></div>
+                        <div>
+                            <div class="h1-dashboard" style="font-size: 16px; margin: 0; padding: 0;">View Account Details</div>
+                            <div class="h3-dashboard" style="font-size: 12px; margin-top: 5px; font-weight: 500;">View Personal information About Your Account</div>
+                        </div>
+                    </div>
+                </a>
 
-                <td width="15%">
-                    <p style="font-size: 14px;color: rgb(119, 119, 119);padding: 0;margin: 0;text-align: right;">
-                        Today's Date
-                    </p>
-                    <p class="heading-sub12" style="padding: 0;margin: 0;">
-                        {{ $today }}
-                    </p>
-                </td>
-                <td width="10%">
-                    <button  class="btn-label"  style="display: flex;justify-content: center;align-items: center;"><img src="{{ asset('img/calendar.svg') }}" width="100%"></button>
-                </td>
+                <a href="?action=drop&id={{ $student->sid }}&name={{ $student->sname }}" class="non-style-link">
+                    <div class="dashboard-items setting-tabs" style="padding:15px; width: 100%; display: flex; align-items: center; gap: 15px;">
+                        <div class="btn-icon-back dashboard-icons-setting" style="background-image: url('{{ asset('img/icons/students-hover.svg') }}'); width: 35px; height: 35px; background-size: cover; background-position: center; border-radius: 8px;"></div>
+                        <div>
+                            <div class="h1-dashboard" style="color: #ff5050; font-size: 16px; margin: 0; padding: 0;">Delete Account</div>
+                            <div class="h3-dashboard" style="font-size: 12px; margin-top: 5px; font-weight: 500;">Will Permanently Remove your Account</div>
+                        </div>
+                    </div>
+                </a>
 
+            </div>
+        </div>
 
-            </tr>
-            <tr>
-                <td colspan="4">
-
-                    <center>
-                        <table class="filter-container" style="border: none;" border="0">
-                            <tr>
-                                <td colspan="4">
-                                    <p style="font-size: 20px">&nbsp;</p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="width: 25%;">
-                                    <a href="?action=edit&id={{ $student->sid }}&error=0" class="non-style-link">
-                                        <div  class="dashboard-items setting-tabs"  style="padding:20px;margin:auto;width:95%;display: flex">
-                                            <div class="btn-icon-back dashboard-icons-setting" style="background-image: url('{{ asset('img/icons/faculty-hover.svg') }}');"></div>
-                                            <div>
-                                                <div class="h1-dashboard">
-                                                    Account Settings  &nbsp;
-
-                                                </div><br>
-                                                <div class="h3-dashboard" style="font-size: 15px;">
-                                                    Edit your Account Details & Change Password
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                    </a>
-                                </td>
-
-
-                            </tr>
-                            <tr>
-                                <td colspan="4">
-                                    <p style="font-size: 5px">&nbsp;</p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="width: 25%;">
-                                    <a href="?action=view&id={{ $student->sid }}" class="non-style-link">
-                                        <div  class="dashboard-items setting-tabs"  style="padding:20px;margin:auto;width:95%;display: flex;">
-                                            <div class="btn-icon-back dashboard-icons-setting " style="background-image: url('{{ asset('img/icons/view-iceblue.svg') }}');"></div>
-                                            <div>
-                                                <div class="h1-dashboard" >
-                                                    View Account Details
-
-                                                </div><br>
-                                                <div class="h3-dashboard"  style="font-size: 15px;">
-                                                    View Personal information About Your Account
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                    </a>
-                                </td>
-
-                            </tr>
-                            <tr>
-                                <td style="width: 25%;">
-                                    <a href="?action=drop&id={{ $student->sid }}&name={{ $student->sname }}" class="non-style-link">
-                                        <div  class="dashboard-items setting-tabs"  style="padding:20px;margin:auto;width:95%;display: flex;">
-                                            <div class="btn-icon-back dashboard-icons-setting" style="background-image: url('{{ asset('img/icons/students-hover.svg') }}');"></div>
-                                            <div>
-                                                <div class="h1-dashboard" style="color: #ff5050;">
-                                                    Delete Account
-
-                                                </div><br>
-                                                <div class="h3-dashboard"  style="font-size: 15px;">
-                                                    Will Permanently Remove your Account
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                    </a>
-                                </td>
-
-                            </tr>
-                        </table>
-                    </center>
-                </td>
-            </tr>
-
-        </table>
     </div>
 </div>
 
@@ -307,7 +260,7 @@
                 <a class="close" href="{{ url('/student/settings') }}">&times;</a>
                 <div style="display: flex;justify-content: center;">
                     <div class="abc">
-                        <table width="80%" class="sub-table scrolldown add-doc-form-container" border="0">
+                        <table width="100%" class="sub-table scrolldown add-doc-form-container" border="0" style="padding: 20px;">
                             <tr>
                                 <td class="label-td" colspan="2">
                                     @if($error == '1')

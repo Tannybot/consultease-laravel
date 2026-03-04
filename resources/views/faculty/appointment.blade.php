@@ -240,6 +240,7 @@
         .review-modal textarea { width: 100%; height: 80px; margin: 10px 0; }
         .review-modal .buttons { display: flex; justify-content: flex-end; gap: 10px; }
     </style>
+    <link href="{{ asset('css/responsive.css') }}" rel="stylesheet">
 </head>
 <body>
     @php

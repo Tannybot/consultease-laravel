@@ -127,6 +127,7 @@
             color: #666;
         }
     </style>
+    <link href="{{ asset('css/responsive.css') }}" rel="stylesheet">
 </head>
 <body>
 <div class="container">
