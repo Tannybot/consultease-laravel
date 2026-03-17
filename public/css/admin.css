@@ -184,6 +184,7 @@
 
 /* Mobile responsiveness */
 @media screen and (max-width: 768px) {
+
     /* Stat grid: 2 columns on mobile */
     .db-stat-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -197,6 +198,7 @@
     .h3-dashboard {
         font-size: 13px;
     }
+
     .container {
         flex-direction: column;
         height: auto;
