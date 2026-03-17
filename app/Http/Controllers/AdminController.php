@@ -273,7 +273,8 @@ class AdminController extends Controller
             ->join('schedule', 'schedule.scheduleid', '=', 'appointment.scheduleid')
             ->join('student', 'student.sid', '=', 'appointment.pid')
             ->join('faculty', 'schedule.facid', '=', 'faculty.facid')
-            ->select('appointment.appoid', 'schedule.scheduleid', 'schedule.title', 'faculty.facname', 'student.sname', 'schedule.scheduledate', 'schedule.scheduletime', 'appointment.apponum', 'appointment.appodate');
+            ->select('appointment.appoid', 'schedule.scheduleid', 'schedule.title', 'faculty.facname', 'student.sname', 'schedule.scheduledate', 'schedule.scheduletime', 'appointment.apponum', 'appointment.appodate')
+            ->whereNotIn('appointment.status', ['expired']);
 
         if ($request->isMethod('post')) {
             if ($request->filled('sheduledate')) {

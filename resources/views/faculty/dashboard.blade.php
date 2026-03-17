@@ -140,11 +140,19 @@
             .fac-hero-btn {
                 width: 100% !important;
                 min-width: unset;
+                text-align: center;
             }
 
             .fac-sessions-abc {
                 height: auto;
                 max-height: 280px;
+            }
+
+            .fac-hero p br { display: none; }
+
+            .fac-sessions-heading {
+                font-size: 17px;
+                padding: var(--sp-2) 0 var(--sp-1) 8px;
             }
         }
 
@@ -154,7 +162,23 @@
             }
 
             .fac-sessions-abc .sub-table {
-                min-width: 320px;
+                min-width: 300px;
+            }
+
+            .fac-hero {
+                padding: 14px 12px !important;
+            }
+
+            .fac-hero h1 {
+                font-size: 20px;
+            }
+
+            .fac-hero p {
+                font-size: 13px;
+            }
+
+            .fac-sessions-heading {
+                font-size: 16px;
             }
         }
     </style>

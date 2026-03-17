@@ -180,11 +180,38 @@
 
             .stu-header-bar .stu-date-cell,
             .stu-header-bar .stu-cal-cell { display: none; }
+
+            .stu-hero p br { display: none; }
+
+            .stu-status-heading {
+                font-size: 18px;
+                padding: 0 0 6px 4px;
+            }
+
+            .stu-panel-heading {
+                font-size: 18px;
+            }
         }
 
         @media screen and (max-width: 480px) {
             .stu-bookings-col .abc { max-height: 240px; }
-            .stu-bookings-col .sub-table { min-width: 340px; }
+            .stu-bookings-col .sub-table { min-width: 300px; }
+
+            .stu-hero {
+                padding: var(--sp-2) var(--sp-1) !important;
+            }
+
+            .stu-hero h1 {
+                font-size: 20px;
+            }
+
+            .stu-hero p {
+                font-size: 13px;
+            }
+
+            .stu-search-form .stu-search-btn {
+                width: 100%;
+            }
         }
     </style>
 </head>

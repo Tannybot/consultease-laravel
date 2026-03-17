@@ -165,8 +165,38 @@
     color: #90ee90;
 }
 
+/* ── Shared stat grid (admin, student, faculty) ── */
+.db-stat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.db-stat-card {
+    min-width: 0;
+}
+
+.db-stat-card .dashboard-items {
+    height: 100%;
+}
+
 /* Mobile responsiveness */
 @media screen and (max-width: 768px) {
+    /* Stat grid: 2 columns on mobile */
+    .db-stat-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .h1-dashboard {
+        font-size: 24px;
+    }
+
+    .h3-dashboard {
+        font-size: 13px;
+    }
     .container {
         flex-direction: column;
         height: auto;

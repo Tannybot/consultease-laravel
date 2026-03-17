@@ -48,6 +48,7 @@ class FacultyController extends Controller
         $schedules = [];
         $scheduleRecords = DB::table('schedule')
             ->where('facid', $faculty->facid)
+            ->where('scheduledate', '>=', $today)
             ->orderBy('scheduledate', 'asc')
             ->orderBy('scheduletime', 'asc')
             ->get();
@@ -66,6 +67,8 @@ class FacultyController extends Controller
             ->join('appointment', 'schedule.scheduleid', '=', 'appointment.scheduleid')
             ->join('student', 'student.sid', '=', 'appointment.pid')
             ->where('schedule.facid', $faculty->facid)
+            ->where('schedule.scheduledate', '>=', $today)
+            ->whereNotIn('appointment.status', ['done', 'canceled', 'expired'])
             ->select(
             'appointment.appoid', 'schedule.scheduleid', 'schedule.title',
             'student.sname', 'schedule.scheduledate', 'schedule.scheduletime',
@@ -218,7 +221,7 @@ class FacultyController extends Controller
                 ->join('subject', 'faculty.subject', '=', 'subject.id')
                 ->select('appointment.appoid', 'appointment.appodate', 'schedule.scheduletime', 'schedule.title', 'subject.sname as subject_name', 'appointment.status')
                 ->where('schedule.facid', $id)
-                ->where('appointment.status', 'done');
+                ->whereIn('appointment.status', ['done', 'expired']);
 
             if ($request->has('from_date') && !empty($request->input('from_date'))) {
                 $query->where('appointment.appodate', '>=', $request->input('from_date'));

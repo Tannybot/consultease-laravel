@@ -257,7 +257,7 @@ class StudentController extends Controller
             ->join('student', 'student.sid', '=', 'appointment.pid')
             ->join('faculty', 'schedule.facid', '=', 'faculty.facid')
             ->where('student.sid', $student->sid)
-            ->whereNotIn('appointment.status', ['done', 'canceled']);
+            ->whereNotIn('appointment.status', ['done', 'canceled', 'expired']);
 
         if ($request->isMethod('post') && $request->has('sheduledate') && !empty($request->input('sheduledate'))) {
             $sheduledate = $request->input('sheduledate');

@@ -94,6 +94,23 @@
             margin: 0;
         }
 
+        /* Stat widget grid */
+        .db-stat-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .db-stat-card {
+            min-width: 0;
+        }
+
+        .db-stat-card .dashboard-items {
+            height: 100%;
+        }
+
         /* Twin table panels wrapper */
         .admin-twin-wrapper {
             display: flex;
@@ -154,7 +171,17 @@
             overflow: hidden;
         }
 
+        .twin-action {
+            padding: 12px 0 4px;
+        }
+
         @media screen and (max-width: 768px) {
+            /* Stat grid: 2 columns on tablet/mobile */
+            .db-stat-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+
             .admin-twin-wrapper {
                 flex-direction: column;
             }
@@ -169,24 +196,79 @@
                 max-height: 280px;
             }
 
+            .twin-action {
+                padding: 10px 0 2px;
+            }
+
             .twin-action .btn {
                 width: 100%;
                 max-width: 100%;
+                text-align: center;
             }
 
             .admin-header-bar .date-cell,
             .admin-header-bar .cal-cell {
                 display: none;
             }
+
+            .db-heading-appo {
+                font-size: 16px;
+                padding: 8px 12px 0;
+            }
+
+            .db-sub-appo {
+                font-size: 13px;
+                padding: 4px 12px 12px;
+            }
+
+            .db-sub-appo br {
+                display: none;
+            }
+
+            .admin-home-title p {
+                font-size: 20px;
+            }
+
+            .h1-dashboard {
+                font-size: 24px;
+            }
+
+            .h3-dashboard {
+                font-size: 13px;
+            }
         }
 
         @media screen and (max-width: 480px) {
+            .db-stat-grid {
+                gap: 8px;
+            }
+
+            .db-stat-card .dashboard-items {
+                padding: 14px !important;
+            }
+
+            .h1-dashboard {
+                font-size: 20px;
+            }
+
+            .h3-dashboard {
+                font-size: 12px;
+            }
+
             .admin-twin-wrapper .twin-panel .abc {
                 max-height: 240px;
             }
 
             .admin-twin-wrapper .twin-panel .sub-table {
-                min-width: 320px;
+                min-width: 300px;
+            }
+
+            .db-heading-appo {
+                font-size: 15px;
+            }
+
+            .admin-home-title p {
+                font-size: 18px;
             }
         }
     </style>
