@@ -319,6 +319,62 @@
 
                             </tr>
                             <tr>
+                            <td style="width: 25%;">
+                                    <div  class="dashboard-items setting-tabs"  style="padding:20px;margin:auto;width:95%;display: flex;">
+                                        <div class="btn-icon-back dashboard-icons-setting" style="background-image: url('{{ asset('img/icons/view-iceblue.svg') }}');"></div>
+                                        <div style="flex: 1;">
+                                                <div class="h1-dashboard">
+                                                    Two-Factor Authentication &nbsp;
+                                                    @if($webuser && $webuser->google_2fa_enabled)
+                                                        <span style="background:#e8f5e9;color:#2e7d32;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;">ENABLED</span>
+                                                    @else
+                                                        <span style="background:#fff3e0;color:#ef6c00;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;">DISABLED</span>
+                                                    @endif
+                                                </div><br>
+                                                <div class="h3-dashboard" style="font-size: 15px;">
+                                                    Secure your account with Google verification on login
+                                                </div>
+                                                <div style="margin-top: 12px;">
+                                                    @if($webuser && $webuser->google_2fa_enabled)
+                                                        <form action="{{ route('google.2fa.disable') }}" method="POST" style="display:inline;">
+                                                            @csrf
+                                                            <button type="submit" class="btn-primary-soft btn" style="padding:8px 20px;font-size:13px;cursor:pointer;">Disable Google 2FA</button>
+                                                        </form>
+                                                    @else
+                                                        <form action="{{ route('google.2fa.enable') }}" method="POST" style="display:inline;">
+                                                            @csrf
+                                                            <button type="submit" class="btn-primary btn" style="padding:8px 20px;font-size:13px;cursor:pointer;background:#4285F4;border:none;">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" style="width:14px;height:14px;vertical-align:middle;margin-right:6px;fill:none;">
+                                                                    <path fill="#fff" d="M44.5 20H24v8.5h11.8C34.7 33.9 30.1 37 24 37c-7.2 0-13-5.8-13-13s5.8-13 13-13c3.1 0 5.9 1.1 8.1 2.9l6.4-6.4C34.6 4.1 29.6 2 24 2 11.8 2 2 11.8 2 24s9.8 22 22 22c11 0 21-8 21-22 0-1.3-.2-2.7-.5-4z"/>
+                                                                </svg>
+                                                                Enable Google 2FA
+                                                            </button>
+                                                        </form>
+                                                    @endif
+                                                </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            @if(session('success'))
+                            <tr>
+                                <td>
+                                    <div style="background:#e8f5e9;color:#2e7d32;padding:12px 20px;border-radius:8px;margin:5px auto;width:95%;font-size:14px;font-weight:500;">
+                                        ✓ {{ session('success') }}
+                                    </div>
+                                </td>
+                            </tr>
+                            @endif
+                            @if(session('error'))
+                            <tr>
+                                <td>
+                                    <div style="background:#fce4ec;color:#c62828;padding:12px 20px;border-radius:8px;margin:5px auto;width:95%;font-size:14px;font-weight:500;">
+                                        ✗ {{ session('error') }}
+                                    </div>
+                                </td>
+                            </tr>
+                            @endif
+                            <tr>
                                 <td colspan="4">
                                     <p style="font-size: 5px">&nbsp;</p>
                                 </td>

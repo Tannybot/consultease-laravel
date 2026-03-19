@@ -338,8 +338,10 @@ class StudentController extends Controller
             $viewStudent = Student::where('sid', $id)->first();
         }
 
+        $webuser = \App\Models\WebUser::where('email', $useremail)->first();
+
         return view('student.settings', compact(
-            'student', 'today', 'action', 'id', 'error', 'nameget', 'viewStudent'
+            'student', 'today', 'action', 'id', 'error', 'nameget', 'viewStudent', 'webuser'
         ));
     }
 

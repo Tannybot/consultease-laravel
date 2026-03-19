@@ -240,8 +240,10 @@ class FacultyController extends Controller
 
         $subjects = DB::table('subject')->get();
 
+        $webuser = \App\Models\WebUser::where('email', $useremail)->first();
+
         return view('faculty.settings', compact(
-            'faculty', 'today', 'action', 'id', 'error_1', 'nameget', 'availabilities', 'bookings', 'subjects', 'request'
+            'faculty', 'today', 'action', 'id', 'error_1', 'nameget', 'availabilities', 'bookings', 'subjects', 'request', 'webuser'
         ));
     }
 

@@ -15,5 +15,9 @@ class WebUser extends Authenticatable
     protected $keyType = 'string';
     public $timestamps = false;
 
-    protected $fillable = ['email', 'usertype'];
+    protected $fillable = ['email', 'usertype', 'google_id', 'google_2fa_enabled'];
+
+    protected $casts = [
+        'google_2fa_enabled' => 'boolean',
+    ];
 }

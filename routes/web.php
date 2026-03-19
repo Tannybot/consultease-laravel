@@ -24,6 +24,13 @@ Route::post('/signup/faculty', [AuthController::class , 'registerFaculty']);
 
 Route::post('/logout', [AuthController::class , 'logout'])->name('logout');
 
+// Google OAuth 2FA Routes
+Route::get('/auth/google/verify', [AuthController::class , 'showGoogleVerify'])->name('google.verify');
+Route::get('/auth/google/redirect', [AuthController::class , 'redirectToGoogle'])->name('google.redirect');
+Route::get('/auth/google/callback', [AuthController::class , 'handleGoogleCallback'])->name('google.callback');
+Route::post('/settings/google-2fa/enable', [AuthController::class , 'enableGoogle2FA'])->name('google.2fa.enable');
+Route::post('/settings/google-2fa/disable', [AuthController::class , 'disableGoogle2FA'])->name('google.2fa.disable');
+
 // Dynamic Web Notification API Routes
 Route::get('/api/notifications', [App\Http\Controllers\NotificationController::class , 'fetch'])->name('notifications.fetch');
 Route::post('/api/notifications/log', [App\Http\Controllers\NotificationController::class , 'log'])->name('notifications.log');

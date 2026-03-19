@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -131,6 +131,51 @@
                         </div>
                     </div>
                 </a>
+
+                <!-- Two-Factor Authentication Card -->
+                <div class="dashboard-items setting-tabs" style="padding:15px; width: 100%; display: flex; align-items: flex-start; gap: 15px;">
+                    <div class="btn-icon-back dashboard-icons-setting" style="background-image: url('{{ asset('img/icons/view-iceblue.svg') }}'); width: 35px; height: 35px; background-size: cover; background-position: center; border-radius: 8px; flex-shrink: 0; margin-top: 3px;"></div>
+                    <div style="flex: 1;">
+                        <div class="h1-dashboard" style="font-size: 16px; margin: 0; padding: 0; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                            Two-Factor Authentication
+                            @if($webuser && $webuser->google_2fa_enabled)
+                                <span style="background:#e8f5e9;color:#2e7d32;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600;">ENABLED</span>
+                            @else
+                                <span style="background:#fff3e0;color:#ef6c00;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600;">DISABLED</span>
+                            @endif
+                        </div>
+                        <div class="h3-dashboard" style="font-size: 12px; margin-top: 5px; font-weight: 500;">Secure your account with Google verification on login</div>
+                        <div style="margin-top: 10px;">
+                            @if($webuser && $webuser->google_2fa_enabled)
+                                <form action="{{ route('google.2fa.disable') }}" method="POST" style="display:inline;">
+                                    @csrf
+                                    <button type="submit" class="btn-primary-soft btn" style="padding:6px 16px;font-size:12px;cursor:pointer;">Disable Google 2FA</button>
+                                </form>
+                            @else
+                                <form action="{{ route('google.2fa.enable') }}" method="POST" style="display:inline;">
+                                    @csrf
+                                    <button type="submit" class="btn-primary btn" style="padding:6px 16px;font-size:12px;cursor:pointer;background:#4285F4;border:none;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" style="width:12px;height:12px;vertical-align:middle;margin-right:4px;fill:none;">
+                                            <path fill="#fff" d="M44.5 20H24v8.5h11.8C34.7 33.9 30.1 37 24 37c-7.2 0-13-5.8-13-13s5.8-13 13-13c3.1 0 5.9 1.1 8.1 2.9l6.4-6.4C34.6 4.1 29.6 2 24 2 11.8 2 2 11.8 2 24s9.8 22 22 22c11 0 21-8 21-22 0-1.3-.2-2.7-.5-4z"/>
+                                        </svg>
+                                        Enable Google 2FA
+                                    </button>
+                                </form>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+
+                @if(session('success'))
+                <div style="background:#e8f5e9;color:#2e7d32;padding:10px 16px;border-radius:8px;font-size:13px;font-weight:500;">
+                    ✓ {{ session('success') }}
+                </div>
+                @endif
+                @if(session('error'))
+                <div style="background:#fce4ec;color:#c62828;padding:10px 16px;border-radius:8px;font-size:13px;font-weight:500;">
+                    ✗ {{ session('error') }}
+                </div>
+                @endif
 
                 <a href="?action=drop&id={{ $student->sid }}&name={{ $student->sname }}" class="non-style-link">
                     <div class="dashboard-items setting-tabs" style="padding:15px; width: 100%; display: flex; align-items: center; gap: 15px;">
