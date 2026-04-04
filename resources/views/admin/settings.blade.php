@@ -80,7 +80,7 @@
                         
                     </td>
                     <td style="display: flex; align-items: center;">
-                        @include('components.hamburger')
+                        @include('shared.hamburger')
                         <p style="font-size: 23px;padding-left:12px;font-weight: 600;">Settings</p>
                     </td>
                     <td width="15%">

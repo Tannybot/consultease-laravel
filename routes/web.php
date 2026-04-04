@@ -1,9 +1,11 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\StudentController;
-use App\Http\Controllers\FacultyController;
+use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Student\StudentController;
+use App\Http\Controllers\Faculty\FacultyController;
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Api\NotificationController;
 
 /* |-------------------------------------------------------------------------- | Web Routes |-------------------------------------------------------------------------- | | Here is where you can register web routes for your application. These | routes are loaded by the RouteServiceProvider within a group which | contains the "web" middleware group. Now create something great! | */
 
@@ -11,7 +13,9 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+// ──────────────────────────────────────────────
 // Authentication Routes
+// ──────────────────────────────────────────────
 Route::get('/login', [AuthController::class , 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class , 'authenticate']);
 Route::get('/signup', [AuthController::class , 'showSignup'])->name('signup');
@@ -24,19 +28,25 @@ Route::post('/signup/faculty', [AuthController::class , 'registerFaculty']);
 
 Route::post('/logout', [AuthController::class , 'logout'])->name('logout');
 
+// ──────────────────────────────────────────────
 // Google OAuth 2FA Routes
+// ──────────────────────────────────────────────
 Route::get('/auth/google/verify', [AuthController::class , 'showGoogleVerify'])->name('google.verify');
 Route::get('/auth/google/redirect', [AuthController::class , 'redirectToGoogle'])->name('google.redirect');
 Route::get('/auth/google/callback', [AuthController::class , 'handleGoogleCallback'])->name('google.callback');
 Route::post('/settings/google-2fa/enable', [AuthController::class , 'enableGoogle2FA'])->name('google.2fa.enable');
 Route::post('/settings/google-2fa/disable', [AuthController::class , 'disableGoogle2FA'])->name('google.2fa.disable');
 
+// ──────────────────────────────────────────────
 // Dynamic Web Notification API Routes
-Route::get('/api/notifications', [App\Http\Controllers\NotificationController::class , 'fetch'])->name('notifications.fetch');
-Route::post('/api/notifications/log', [App\Http\Controllers\NotificationController::class , 'log'])->name('notifications.log');
-Route::post('/api/notifications/read', [App\Http\Controllers\NotificationController::class , 'markAsRead'])->name('notifications.read');
+// ──────────────────────────────────────────────
+Route::get('/api/notifications', [NotificationController::class , 'fetch'])->name('notifications.fetch');
+Route::post('/api/notifications/log', [NotificationController::class , 'log'])->name('notifications.log');
+Route::post('/api/notifications/read', [NotificationController::class , 'markAsRead'])->name('notifications.read');
 
+// ──────────────────────────────────────────────
 // Student Routes
+// ──────────────────────────────────────────────
 Route::prefix('student')->name('student.')->group(function () {
     Route::get('/dashboard', [StudentController::class , 'dashboard'])->name('dashboard');
     Route::get('/faculty', [StudentController::class , 'faculty'])->name('faculty');
@@ -54,7 +64,9 @@ Route::prefix('student')->name('student.')->group(function () {
     Route::post('/settings/delete', [StudentController::class , 'deleteAccount'])->name('settings.delete');
 });
 
+// ──────────────────────────────────────────────
 // Faculty Routes
+// ──────────────────────────────────────────────
 Route::prefix('faculty')->name('faculty.')->group(function () {
     Route::get('/dashboard', [FacultyController::class , 'dashboard'])->name('dashboard');
     Route::get('/appointment', [FacultyController::class , 'appointment'])->name('appointment');
@@ -71,25 +83,27 @@ Route::prefix('faculty')->name('faculty.')->group(function () {
     Route::post('/settings/delete', [FacultyController::class , 'deleteAccount'])->name('settings.delete');
 });
 
+// ──────────────────────────────────────────────
 // Admin Routes
+// ──────────────────────────────────────────────
 Route::prefix('admin')->name('admin.')->group(function () {
-    Route::get('/dashboard', [\App\Http\Controllers\AdminController::class , 'dashboard'])->name('dashboard');
-    Route::get('/faculty', [\App\Http\Controllers\AdminController::class , 'faculty'])->name('faculty');
-    Route::post('/faculty', [\App\Http\Controllers\AdminController::class , 'faculty']);
-    Route::post('/faculty/add', [\App\Http\Controllers\AdminController::class , 'addFaculty'])->name('faculty.add');
-    Route::post('/faculty/edit', [\App\Http\Controllers\AdminController::class , 'editFaculty'])->name('faculty.edit');
-    Route::post('/faculty/delete', [\App\Http\Controllers\AdminController::class , 'deleteFaculty'])->name('faculty.delete');
+    Route::get('/dashboard', [AdminController::class , 'dashboard'])->name('dashboard');
+    Route::get('/faculty', [AdminController::class , 'faculty'])->name('faculty');
+    Route::post('/faculty', [AdminController::class , 'faculty']);
+    Route::post('/faculty/add', [AdminController::class , 'addFaculty'])->name('faculty.add');
+    Route::post('/faculty/edit', [AdminController::class , 'editFaculty'])->name('faculty.edit');
+    Route::post('/faculty/delete', [AdminController::class , 'deleteFaculty'])->name('faculty.delete');
 
-    Route::get('/schedule', [\App\Http\Controllers\AdminController::class , 'schedule'])->name('schedule');
-    Route::post('/schedule', [\App\Http\Controllers\AdminController::class , 'schedule']);
-    Route::post('/schedule/delete', [\App\Http\Controllers\AdminController::class , 'deleteSession'])->name('schedule.delete');
+    Route::get('/schedule', [AdminController::class , 'schedule'])->name('schedule');
+    Route::post('/schedule', [AdminController::class , 'schedule']);
+    Route::post('/schedule/delete', [AdminController::class , 'deleteSession'])->name('schedule.delete');
 
-    Route::get('/appointment', [\App\Http\Controllers\AdminController::class , 'appointment'])->name('appointment');
-    Route::post('/appointment', [\App\Http\Controllers\AdminController::class , 'appointment']);
-    Route::post('/appointment/delete', [\App\Http\Controllers\AdminController::class , 'deleteAppointment'])->name('appointment.delete');
+    Route::get('/appointment', [AdminController::class , 'appointment'])->name('appointment');
+    Route::post('/appointment', [AdminController::class , 'appointment']);
+    Route::post('/appointment/delete', [AdminController::class , 'deleteAppointment'])->name('appointment.delete');
 
-    Route::get('/student', [\App\Http\Controllers\AdminController::class , 'student'])->name('student');
-    Route::post('/student', [\App\Http\Controllers\AdminController::class , 'student']);
+    Route::get('/student', [AdminController::class , 'student'])->name('student');
+    Route::post('/student', [AdminController::class , 'student']);
 
-    Route::get('/settings', [\App\Http\Controllers\AdminController::class , 'settings'])->name('settings');
+    Route::get('/settings', [AdminController::class , 'settings'])->name('settings');
 });

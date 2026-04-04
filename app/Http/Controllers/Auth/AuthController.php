@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Auth;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\WebUser;
-use App\Models\Admin;
-use App\Models\Faculty;
-use App\Models\Student;
+use App\Models\Auth\WebUser;
+use App\Models\Admin\Admin;
+use App\Models\Faculty\Faculty;
+use App\Models\Student\Student;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\DB;
 use Laravel\Socialite\Facades\Socialite;

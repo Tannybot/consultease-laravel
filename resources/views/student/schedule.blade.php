@@ -475,6 +475,6 @@
     }
 </script>
 
-    @include('components.notifications')
+    @include('shared.notifications')
 </body>
 </html>

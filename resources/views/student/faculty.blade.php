@@ -323,6 +323,6 @@
         </div>
     @endif
 </div>
-    @include('components.notifications')
+    @include('shared.notifications')
 </body>
 </html>

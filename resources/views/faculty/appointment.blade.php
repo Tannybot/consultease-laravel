@@ -362,7 +362,7 @@
                         <a href="{{ url('/faculty/dashboard') }}"><button class="login-btn btn-primary-soft btn btn-icon-back" style="padding-top:11px;padding-bottom:11px;margin-left:20px;width:125px"><font class="tn-in-text">Back</font></button></a>
                     </td>
                     <td colspan="1" class="nav-bar" style="display: flex; align-items: center;">
-                        @include('components.hamburger')
+                        @include('shared.hamburger')
                         <p style="font-size: 23px;padding-left:12px;font-weight: 600;margin-left:20px;">My Appointments</p>
                     </td>
                     <td width="15%">
@@ -542,6 +542,6 @@
             // Optionally clear URL parameters if wanted
         }
     </script>
-    @include('components.notifications')
+    @include('shared.notifications')
 </body>
 </html>

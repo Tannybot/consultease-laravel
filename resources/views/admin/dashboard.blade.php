@@ -364,7 +364,7 @@
 
             {{-- ── Home title + hamburger ── --}}
             <div class="admin-home-title">
-                @include('components.hamburger')
+                @include('shared.hamburger')
                 <p>Home</p>
             </div>
 

@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Faculty;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Faculty;
+use App\Models\Faculty\Faculty;
+use App\Models\Auth\WebUser;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\DB;
 
@@ -240,7 +242,7 @@ class FacultyController extends Controller
 
         $subjects = DB::table('subject')->get();
 
-        $webuser = \App\Models\WebUser::where('email', $useremail)->first();
+        $webuser = WebUser::where('email', $useremail)->first();
 
         return view('faculty.settings', compact(
             'faculty', 'today', 'action', 'id', 'error_1', 'nameget', 'availabilities', 'bookings', 'subjects', 'request', 'webuser'

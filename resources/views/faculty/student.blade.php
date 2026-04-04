@@ -88,7 +88,7 @@
 
                     </td>
                     <td style="display: flex; align-items: center;">
-                        @include('components.hamburger')
+                        @include('shared.hamburger')
                         <p style="font-size: 20px;font-weight: 600;color: rgb(49, 49, 49);">{{ $message }}</p>
                     </td>
                     <td width="15%">
@@ -111,6 +111,6 @@
     </div>
 </div>
 
-    @include('components.notifications')
+    @include('shared.notifications')
 </body>
 </html>

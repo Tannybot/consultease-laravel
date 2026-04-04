@@ -1,18 +1,17 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-
-use App\Models\WebNotification;
-use App\Models\Student;
-use App\Models\Faculty;
-use App\Models\Admin;
+use App\Models\Auth\WebNotification;
+use App\Models\Student\Student;
+use App\Models\Faculty\Faculty;
+use App\Models\Admin\Admin;
 use Illuminate\Support\Facades\Session;
 
 class NotificationController extends Controller
 {
-    // Fetches all notifications for the currently logged-in user
     public function fetch(Request $request)
     {
         $userEmail = Session::get('user');
@@ -22,24 +21,18 @@ class NotificationController extends Controller
             return response()->json(['error' => 'Unauthenticated'], 401);
         }
 
-        // Determine the user's ID based on their type
         $userId = null;
-        if ($usertype === 's') { // Student
+        if ($usertype === 's') {
             $student = Student::where('semail', $userEmail)->first();
-            if ($student)
-                $userId = $student->sid;
+            if ($student) $userId = $student->sid;
             $typeString = 'student';
-        }
-        elseif ($usertype === 'd') { // Faculty
+        } elseif ($usertype === 'd') {
             $faculty = Faculty::where('facemail', $userEmail)->first();
-            if ($faculty)
-                $userId = $faculty->facid;
+            if ($faculty) $userId = $faculty->facid;
             $typeString = 'faculty';
-        }
-        elseif ($usertype === 'a') { // Admin
+        } elseif ($usertype === 'a') {
             $admin = Admin::where('aemail', $userEmail)->first();
-            if ($admin)
-                $userId = $admin->aemail; // Assuming admin uses email as ID or similar
+            if ($admin) $userId = $admin->aemail;
             $typeString = 'admin';
         }
 
@@ -60,11 +53,9 @@ class NotificationController extends Controller
         ]);
     }
 
-    // Mark a specific notification as read, or all if no ID is passed
     public function markAsRead(Request $request)
     {
         $id = $request->input('id');
-
         $userEmail = Session::get('user');
         $usertype = Session::get('usertype');
 
@@ -74,16 +65,11 @@ class NotificationController extends Controller
 
         if ($id) {
             WebNotification::where('id', $id)->update(['is_read' => true]);
-        }
-        else {
-            // Determine user
+        } else {
             $userId = null;
-            if ($usertype === 's')
-                $userId = Student::where('semail', $userEmail)->value('sid');
-            elseif ($usertype === 'd')
-                $userId = Faculty::where('facemail', $userEmail)->value('facid');
-            elseif ($usertype === 'a')
-                $userId = Admin::where('aemail', $userEmail)->value('aemail');
+            if ($usertype === 's') $userId = Student::where('semail', $userEmail)->value('sid');
+            elseif ($usertype === 'd') $userId = Faculty::where('facemail', $userEmail)->value('facid');
+            elseif ($usertype === 'a') $userId = Admin::where('aemail', $userEmail)->value('aemail');
 
             if ($userId) {
                 WebNotification::where('user_id', $userId)->update(['is_read' => true]);
@@ -93,7 +79,6 @@ class NotificationController extends Controller
         return response()->json(['success' => true]);
     }
 
-    // Allows the frontend to log a new notification (e.g. EmailJS Success)
     public function log(Request $request)
     {
         $request->validate([

@@ -243,7 +243,7 @@
             {{-- ── Header bar ── --}}
             <div class="fac-header-bar">
                 <div class="fac-title-cell">
-                    @include('components.hamburger')
+                    @include('shared.hamburger')
                     <p>Home</p>
                 </div>
                 <div class="fac-date-cell">
@@ -317,6 +317,6 @@
         </div>{{-- end dash-body --}}
     </div>{{-- end container --}}
 
-    @include('components.notifications')
+    @include('shared.notifications')
 </body>
 </html>

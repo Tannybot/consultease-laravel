@@ -104,7 +104,7 @@
 
         <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 20px 20px; flex-wrap: wrap; gap: 15px;">
             <div class="admin-home-title" style="padding: 0;">
-                @include('components.hamburger')
+                @include('shared.hamburger')
                 <p>Settings</p>
             </div>
         </div>
@@ -437,6 +437,6 @@
     </div>
 @endif
 
-    @include('components.notifications')
+    @include('shared.notifications')
 </body>
 </html>

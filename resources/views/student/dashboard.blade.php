@@ -280,7 +280,7 @@
             {{-- ── Header bar ── --}}
             <div class="stu-header-bar">
                 <div class="stu-title-cell">
-                    @include('components.hamburger')
+                    @include('shared.hamburger')
                     <p>Home</p>
                 </div>
                 <div class="stu-date-cell">
@@ -402,6 +402,6 @@
 
     </div>{{-- end container --}}
 
-    @include('components.notifications')
+    @include('shared.notifications')
 </body>
 </html>

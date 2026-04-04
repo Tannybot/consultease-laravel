@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -82,7 +82,7 @@
         </div>
                 <div class="dash-body" style="margin-top: 15px">
 
-            {{-- ── Top header bar ── --}}
+            {{-- -- Top header bar -- --}}
             <div class="admin-header-bar" style="justify-content: space-between;">
                 <div class="back-cell" style="display: flex; align-items: center; gap: 15px;">
                     <a href="{{ url('/admin/dashboard') }}" ><button  class="login-btn btn-primary-soft btn btn-icon-back"  style="padding-top:11px;padding-bottom:11px;margin-left:20px;width:125px"><font class="tn-in-text">Back</font></button></a>
@@ -117,10 +117,10 @@
                 </div>
             </div>
 
-            {{-- ── Title & Add New Panel ── --}}
+            {{-- -- Title & Add New Panel -- --}}
             <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 20px 20px; flex-wrap: wrap; gap: 15px;">
                 <div class="admin-home-title" style="padding: 0;">
-                    @include('components.hamburger')
+                    @include('shared.hamburger')
                     <p>Faculty Management</p>
                 </div>
                 <a href="?action=add&id=none&error=0" class="non-style-link">
@@ -128,7 +128,7 @@
                 </a>
             </div>
 
-            {{-- ── Main Data Panel ── --}}
+            {{-- -- Main Data Panel -- --}}
             <div style="padding: 0 20px 20px;">
                 <div class="db-panel">
                     <p class="db-heading-appo" style="padding: 5px 10px 15px; margin: 0; font-size: 18px;">All Faculty ({{ $faculties->count() }})</p>
@@ -415,7 +415,7 @@
                             </tr>
                             <tr >
                                 <td colspan="1" class="nav-bar" style="display: flex; align-items: center;">
-                                    @include('components.hamburger')
+                                    @include('shared.hamburger')
                                     <p style="font-size: 23px;padding-left:12px;font-weight: 600;margin-left:20px;">Faculty Providers</p>
                                 </td>
                             </tr>
