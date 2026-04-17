@@ -7,352 +7,204 @@
     <link rel="stylesheet" href="{{ asset('css/animations.css') }}">
     <link rel="stylesheet" href="{{ asset('css/main.css') }}">
     <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
-
+    <link href="{{ asset('css/responsive.css') }}" rel="stylesheet">
     <title>Appointments</title>
     <style>
-        .popup{
+        .popup,
+        .sub-table,
+        .page-card {
             animation: transitionIn-Y-bottom 0.5s;
-        }
-        .sub-table{
-            animation: transitionIn-Y-bottom 0.5s;
-        }
-        .review-modal {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            padding: 30px;
-            z-index: 1001;
-            max-width: 500px;
-            width: 90%;
-        }
-        .review-modal h3 {
-            margin-top: 0;
-            color: #333;
-        }
-        .stars {
-            display: flex;
-            gap: 5px;
-            margin: 10px 0;
-        }
-        .stars input {
-            display: none;
-        }
-        .stars label {
-            font-size: 30px;
-            color: #ddd;
-            cursor: pointer;
-        }
-        .stars input:checked ~ label,
-        .stars label:hover,
-        .stars label:hover ~ label {
-            color: #ffc107;
-        }
-        .review-modal textarea {
-            width: 100%;
-            height: 80px;
-            margin: 10px 0;
-        }
-        .review-modal .buttons {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-        }
-        .notification-panel {
-            position: fixed;
-            top: 0;
-            right: -400px;
-            width: 350px;
-            height: 100%;
-            background: white;
-            box-shadow: -2px 0 5px rgba(0,0,0,0.1);
-            transition: right 0.3s;
-            z-index: 1000;
-            border-left: 1px solid #ddd;
-        }
-        .notification-panel.open {
-            right: 0;
-        }
-        .notification-header {
-            background: #228B22;
-            color: white;
-            padding: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .notification-header .close-panel {
-            cursor: pointer;
-            font-size: 24px;
-        }
-        .notification-list {
-            padding: 10px;
-            max-height: calc(100% - 60px);
-            overflow-y: auto;
-        }
-        .notification-item {
-            background: #f8f9fa;
-            margin: 10px 0;
-            padding: 10px;
-            border-radius: 5px;
-            border-left: 4px solid #228B22;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        .notification-item.unread {
-            background: #e8f5e9;
-        }
-        .notification-item.expanded {
-            background: #fff;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .notification-item .summary {
-            font-weight: bold;
-        }
-        .notification-item .details {
-            display: none;
-            margin-top: 10px;
-            padding-top: 10px;
-            border-top: 1px solid #ddd;
-        }
-        .notification-item.expanded .details {
-            display: block;
-        }
-        .notification-item .time {
-            font-size: 12px;
-            color: #666;
         }
     </style>
-    <link href="{{ asset('css/responsive.css') }}" rel="stylesheet">
 </head>
 <body>
-<div class="container">
-    <div class="menu" id="menu">
-        <table class="menu-container" border="0">
-            <tr>
-                <td style="padding:10px" colspan="2">
-                    <table border="0" class="profile-container">
-                        <tr>
-                            <td width="30%" style="padding-left:20px" >
-                                <img src="{{ $student->profile_pic ? asset('storage/' . $student->profile_pic) : asset('img/user.png') }}" alt="User Icon" style="width: 91.85px; height: 91.85px; object-fit: cover; border-radius:50%">
-                            </td>
-                            <td style="padding:0px;margin:0px;">
-                                <p class="profile-title">{{ substr($student->sname,0,13) }}..</p>
-                                <p class="profile-subtitle">{{ substr($student->semail,0,22) }}</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="2">
-                                <form action="{{ route('logout') }}" method="POST">
-                                    @csrf
-                                    <button type="submit" class="logout-btn btn-primary-soft btn">Log out</button>
-                                </form>
-                            </td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
-            <tr class="menu-row" >
-                <td class="menu-btn menu-icon-home" >
-                    <a href="{{ url('/student/dashboard') }}" class="non-style-link-menu "><div><p class="menu-text">Home</p></div></a>
-                </td>
-            </tr>
-            <tr class="menu-row">
-                <td class="menu-btn menu-icon-faculty">
-                    <a href="{{ url('/student/faculty') }}" class="non-style-link-menu"><div><p class="menu-text">All Faculty</p></div></a>
-                </td>
-            </tr>
-
-            <tr class="menu-row" >
-                <td class="menu-btn menu-icon-session">
-                    <a href="{{ url('/student/schedule') }}" class="non-style-link-menu"><div><p class="menu-text">Scheduled Sessions</p></div></a>
-                </td>
-            </tr>
-            <tr class="menu-row" >
-                <td class="menu-btn menu-icon-appoinment  menu-active menu-icon-appoinment-active">
-                    <a href="{{ url('/student/appointment') }}" class="non-style-link-menu non-style-link-menu-active"><div><p class="menu-text">My Bookings</p></div></a>
-                </td>
-            </tr>
-            <tr class="menu-row" >
-                <td class="menu-btn menu-icon-settings">
-                    <a href="{{ url('/student/settings') }}" class="non-style-link-menu"><div><p class="menu-text">Settings</p></div></a>
-                </td>
-            </tr>
-            <tr class="menu-row" >
-                <td class="menu-btn menu-icon-notifications" id="notification-btn">
-                    <div><p class="menu-text">Notifications</p></div>
-                </td>
-            </tr>
-
-        </table>
-    </div>
-    <div class="dash-body" id="dash-body">
-        <table border="0" width="100%" style=" border-spacing: 0;margin:0;padding:0;margin-top:25px; ">
-            <tr >
-                <td width="13%" >
-                    <a href="{{ url('/student/dashboard') }}" ><button  class="login-btn btn-primary-soft btn btn-icon-back"  style="padding-top:11px;padding-bottom:11px;margin-left:20px;width:125px"><font class="tn-in-text">Back</font></button></a>
-                </td>
-                <td colspan="1" class="nav-bar" style="display: flex; align-items: center;">
-                    @include('shared.hamburger')
-                    <p style="font-size: 23px;padding-left:12px;font-weight: 600;margin-left:20px;">My Bookings</p>
-                </td>
-                <td width="15%">
-                    <p style="font-size: 14px;color: rgb(119, 119, 119);padding: 0;margin: 0;text-align: right;">
-                        Today's Date
-                    </p>
-                    <p class="heading-sub12" style="padding: 0;margin: 0;">
-                        {{ $today }}
-                    </p>
-                </td>
-                <td width="10%">
-                    <button  class="btn-label"  style="display: flex;justify-content: center;align-items: center;"><img src="{{ asset('img/calendar.svg') }}" width="100%"></button>
-                </td>
-            </tr>
-
-            <tr>
-                <td colspan="4" style="padding-top:10px;width: 100%;" >
-                    @if(session('success'))
-                        <div style="background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; padding: 15px; margin: 10px 45px; border-radius: 5px; font-weight: 500;">
-                            ✅ {{ session('success') }}
-                        </div>
-                    @endif
-                    <p class="heading-main12" style="margin-left: 45px;font-size:18px;color:rgb(49, 49, 49)">My Bookings ({{ $appointments->count() }})</p>
-                </td>
-
-            </tr>
-            <tr>
-                <td colspan="4" style="padding-top:0px;width: 100%;" >
-                    <center>
-                        <table class="filter-container" border="0" >
+    <div class="container">
+        <div class="menu" id="menu">
+            <table class="menu-container" border="0">
+                <tr>
+                    <td style="padding:10px" colspan="2">
+                        <table border="0" class="profile-container">
                             <tr>
-                                <td width="10%">
-
+                                <td width="30%" style="padding-left:20px">
+                                    <img src="{{ $student->profile_pic ? asset('storage/' . $student->profile_pic) : asset('img/user.png') }}" alt="User icon" style="width: 91.85px; height: 91.85px; object-fit: cover; border-radius:50%">
                                 </td>
-                                <td width="5%" style="text-align: center;">
-                                    Date:
+                                <td style="padding:0;margin:0;">
+                                    <p class="profile-title">{{ substr($student->sname,0,13) }}..</p>
+                                    <p class="profile-subtitle">{{ substr($student->semail,0,22) }}</p>
                                 </td>
-                                <td width="30%">
-                                    <form action="{{ url('/student/appointment') }}" method="post">
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <form action="{{ route('logout') }}" method="POST">
                                         @csrf
-                                        <input type="date" name="sheduledate" id="date" class="input-text filter-container-items" style="margin: 0;width: 95%;">
-                                </td>
-
-                                <td width="12%">
-                                    <input type="submit"  name="filter" value=" Filter" class=" btn-primary-soft btn button-icon btn-filter"  style="padding: 15px; margin :0;width:100%">
+                                        <button type="submit" class="logout-btn btn-primary-soft btn">Log out</button>
                                     </form>
                                 </td>
-
                             </tr>
                         </table>
+                    </td>
+                </tr>
+                <tr class="menu-row">
+                    <td class="menu-btn menu-icon-home">
+                        <a href="{{ url('/student/dashboard') }}" class="non-style-link-menu"><div><p class="menu-text">Home</p></div></a>
+                    </td>
+                </tr>
+                <tr class="menu-row">
+                    <td class="menu-btn menu-icon-faculty">
+                        <a href="{{ url('/student/faculty') }}" class="non-style-link-menu"><div><p class="menu-text">All Faculty</p></div></a>
+                    </td>
+                </tr>
+                <tr class="menu-row">
+                    <td class="menu-btn menu-icon-session">
+                        <a href="{{ url('/student/schedule') }}" class="non-style-link-menu"><div><p class="menu-text">Scheduled Sessions</p></div></a>
+                    </td>
+                </tr>
+                <tr class="menu-row">
+                    <td class="menu-btn menu-icon-appoinment menu-active menu-icon-appoinment-active">
+                        <a href="{{ url('/student/appointment') }}" class="non-style-link-menu non-style-link-menu-active"><div><p class="menu-text">My Bookings</p></div></a>
+                    </td>
+                </tr>
+                <tr class="menu-row">
+                    <td class="menu-btn menu-icon-settings">
+                        <a href="{{ url('/student/settings') }}" class="non-style-link-menu"><div><p class="menu-text">Settings</p></div></a>
+                    </td>
+                </tr>
+                <tr class="menu-row">
+                    <td class="menu-btn menu-icon-notifications" id="notification-btn">
+                        <div><p class="menu-text">Notifications</p></div>
+                    </td>
+                </tr>
+            </table>
+        </div>
 
-                    </center>
-                </td>
-
-            </tr>
-
-            <tr>
-                <td colspan="4">
-                    <center>
-                        <div class="abc scroll">
-                            <table width="93%" class="sub-table scrolldown" border="0" style="border:none">
-
-                                <tbody>
-                                @if($appointments->count() == 0)
-                                    <tr>
-                                        <td colspan="7">
-                                            <br><br><br><br>
-                                            <center>
-                                                <img src="{{ asset('img/notfound.svg') }}" width="25%">
-
-                                                <br>
-                                                <p class="heading-main12" style="margin-left: 45px;font-size:20px;color:rgb(49, 49, 49)">We couldnt find anything related to your keywords !</p>
-                                                <a class="non-style-link" href="{{ url('/student/appointment') }}"><button  class="login-btn btn-primary-soft btn"  style="display: flex;justify-content: center;align-items: center;margin-left:20px;">&nbsp; Show all Appointments &nbsp;</font></button></a>
-                                            </center>
-                                            <br><br><br><br>
-                                        </td>
-                                    </tr>
-                                @else
-                                    @php $count = 0; @endphp
-                                    @foreach($appointments as $appo)
-                                        @if($count % 3 == 0)
-                                            <tr>
-                                        @endif
-                                        <td style="width: 25%;">
-                                            <div  class="dashboard-items search-items"  >
-                                                <div style="width:100%;">
-                                                    <div class="h3-search">
-                                                        Booking Date: {{ substr($appo->appodate,0,30) }}<br>
-                                                        Reference Number: OC-000-{{ $appo->appoid }}
-                                                    </div>
-                                                    <div class="h1-search">
-                                                        {{ substr($appo->title,0,21) }}<br>
-                                                    </div>
-                                                    <div class="h3-search">
-                                                        Appointment Number:<div class="h1-search">0{{ $appo->apponum }}</div>
-                                                    </div>
-                                                    <div class="h3-search">
-                                                        {{ substr($appo->facname,0,30) }}
-                                                    </div>
-
-                                                    <div class="h4-search">
-                                                        Scheduled Date: {{ $appo->scheduledate }}<br>Starts: <b>@ {{ substr($appo->scheduletime,0,5) }}</b> (24h)
-                                                    </div>
-                                                    <br>
-                                                    <a href="?action=drop&id={{ $appo->appoid }}&title={{ urlencode($appo->title) }}&doc={{ urlencode($appo->facname) }}" ><button  class="login-btn btn-primary-soft btn "  style="padding-top:11px;padding-bottom:11px;width:100%"><font class="tn-in-text">Cancel Booking</font></button></a>
-                                                    @if($appo->status == 'done')
-                                                    <a href="?action=review&id={{ $appo->appoid }}" ><button  class="login-btn btn-primary btn "  style="padding-top:11px;padding-bottom:11px;width:100%;margin-top:5px"><font class="tn-in-text">Review Faculty</font></button></a>
-                                                    @endif
-                                                </div>
-                                            </div>
-                                        </td>
-                                        @php $count++; @endphp
-                                        @if($count % 3 == 0)
-                                            </tr>
-                                        @endif
-                                    @endforeach
-                                    @if($count % 3 != 0)
-                                        </tr>
-                                    @endif
-                                @endif
-                                </tbody>
-
-                            </table>
+        <div class="dash-body" id="dash-body">
+            <div class="page-shell">
+                <div class="page-toolbar">
+                    <div class="page-toolbar__group">
+                        <a href="{{ url('/student/dashboard') }}" class="non-style-link">
+                            <button class="login-btn btn-primary-soft btn btn-icon-back">Back</button>
+                        </a>
+                        <div>
+                            <div class="page-toolbar__group">
+                                @include('shared.hamburger')
+                                <h1 class="page-toolbar__title">My Bookings</h1>
+                            </div>
+                            <p class="page-toolbar__subtitle">Review upcoming appointments, filter by date, and manage bookings from one place.</p>
                         </div>
-                    </center>
-                </td>
-            </tr>
+                    </div>
 
-        </table>
+                    <div class="page-meta">
+                        <div class="page-meta__copy">
+                            <span class="page-meta__label">Today's Date</span>
+                            <span class="page-meta__value">{{ $today }}</span>
+                        </div>
+                        <button class="btn-label">
+                            <img src="{{ asset('img/calendar.svg') }}" width="24" alt="Calendar">
+                        </button>
+                    </div>
+                </div>
+
+                @if(session('success'))
+                    <div class="status-banner status-banner--success">{{ session('success') }}</div>
+                @endif
+
+                <div class="page-card">
+                    <div class="page-card__header">
+                        <div>
+                            <span class="page-card__eyebrow">Filter</span>
+                            <h2 class="page-card__title">Find appointments by date</h2>
+                            <p class="page-card__description">Use the date filter below to quickly narrow your bookings.</p>
+                        </div>
+                    </div>
+
+                    <form action="{{ url('/student/appointment') }}" method="post" class="toolbar-search">
+                        @csrf
+                        <input type="date" name="sheduledate" id="date" class="input-text" aria-label="Filter appointments by date">
+                        <input type="submit" name="filter" value="Filter" class="btn-primary-soft btn button-icon btn-filter">
+                    </form>
+                </div>
+
+                <div class="page-card">
+                    <div class="page-card__header">
+                        <div>
+                            <span class="page-card__eyebrow">Appointments</span>
+                            <h2 class="page-card__title">My bookings ({{ $appointments->count() }})</h2>
+                            <p class="page-card__description">Keep track of your booking references, session schedule, and faculty details.</p>
+                        </div>
+                    </div>
+
+                    @if($appointments->count() == 0)
+                        <div class="empty-state">
+                            <img src="{{ asset('img/notfound.svg') }}" alt="No appointments found">
+                            <p>We could not find any appointments related to your current filter.</p>
+                            <a class="non-style-link" href="{{ url('/student/appointment') }}">
+                                <button class="login-btn btn-primary-soft btn">Show all appointments</button>
+                            </a>
+                        </div>
+                    @else
+                        <div class="record-card-grid">
+                            @foreach($appointments as $appo)
+                                <div class="record-card">
+                                    <div>
+                                        <p class="record-card__meta"><strong>Booking date:</strong> {{ substr($appo->appodate,0,30) }}</p>
+                                        <p class="record-card__meta"><strong>Reference:</strong> OC-000-{{ $appo->appoid }}</p>
+                                    </div>
+
+                                    <div>
+                                        <h3 class="record-card__title">{{ substr($appo->title,0,21) }}</h3>
+                                        <p class="record-card__copy">{{ substr($appo->facname,0,30) }}</p>
+                                    </div>
+
+                                    <div>
+                                        <p class="record-card__meta"><strong>Appointment number:</strong> 0{{ $appo->apponum }}</p>
+                                        <p class="record-card__meta"><strong>Scheduled date:</strong> {{ $appo->scheduledate }}</p>
+                                        <p class="record-card__meta"><strong>Starts:</strong> {{ substr($appo->scheduletime,0,5) }} (24h)</p>
+                                    </div>
+
+                                    <div class="record-card__actions">
+                                        <a href="?action=drop&id={{ $appo->appoid }}&title={{ urlencode($appo->title) }}&doc={{ urlencode($appo->facname) }}" class="non-style-link">
+                                            <button class="login-btn btn-primary-soft btn">Cancel Booking</button>
+                                        </a>
+                                        @if($appo->status == 'done')
+                                            <a href="?action=review&id={{ $appo->appoid }}" class="non-style-link">
+                                                <button class="login-btn btn-primary btn">Review Faculty</button>
+                                            </a>
+                                        @endif
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </div>
     </div>
-</div>
 
-   @if($action=='drop')
+    @if($action=='drop')
         <div id="popup1" class="overlay">
             <div class="popup">
                 <center>
-                    <h2>Are you sure?</h2>
+                    <h2>Cancel this booking?</h2>
                     <a class="close" href="{{ url('/student/appointment') }}">&times;</a>
                     <div class="content">
                         You are about to cancel this appointment.<br><br>
-                        Faculty Name: &nbsp;<b>{{ urldecode($docParam) }}</b><br>
-                        Session Title &nbsp; : <b>{{ urldecode($titleParam) }}</b><br><br>
+                        Faculty name: <b>{{ urldecode($docParam) }}</b><br>
+                        Session title: <b>{{ urldecode($titleParam) }}</b>
                     </div>
-                    <div style="display: flex;justify-content: center;">
+                    <div class="dialog-actions">
                         <form action="{{ route('student.appointment.delete') }}" method="POST">
                             @csrf
                             <input type="hidden" name="appoid" value="{{ $id }}">
-                            <button type="submit" class="btn-primary btn" style="display:flex;justify-content:center;align-items:center;margin:10px;padding:10px;"><font class="tn-in-text">&nbsp;Yes, Cancel&nbsp;</font></button>
-                        </form>&nbsp;&nbsp;&nbsp;
-                        <a href="{{ url('/student/appointment') }}" class="non-style-link"><button class="btn-primary-soft btn" style="display:flex;justify-content:center;align-items:center;margin:10px;padding:10px;"><font class="tn-in-text">&nbsp;&nbsp;No, Keep It&nbsp;&nbsp;</font></button></a>
+                            <button type="submit" class="btn-primary btn">Yes, cancel</button>
+                        </form>
+                        <a href="{{ url('/student/appointment') }}" class="non-style-link">
+                            <button class="btn-primary-soft btn">Keep booking</button>
+                        </a>
                     </div>
                 </center>
             </div>
         </div>
-   @endif
+    @endif
 
     @include('shared.notifications')
 </body>

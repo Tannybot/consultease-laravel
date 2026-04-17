@@ -4,40 +4,35 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="ConsultEase - Faculty Consultation & Appointment Booking System. Schedule appointments with faculty members easily.">
+    <meta name="description" content="ConsultEase is a faculty consultation and appointment booking system for Surigao Del Norte State University.">
     <link rel="stylesheet" href="{{ asset('css/animations.css') }}">
     <link rel="stylesheet" href="{{ asset('css/main.css') }}">
     <link rel="stylesheet" href="{{ asset('css/index.css') }}">
     <title>ConsultEase - Faculty Consultation System</title>
 </head>
 <body>
-
-    {{-- ═══════════ HERO SECTION ═══════════ --}}
     <section class="hero-section">
         <nav class="top-nav">
             <div class="nav-brand">
                 <span class="edoc-logo">ConsultEase</span>
-                <span class="edoc-logo-sub">| Surigao Del Norte State University</span>
+                <span class="edoc-logo-sub">Surigao Del Norte State University</span>
             </div>
             <div class="nav-links">
-                <a href="{{ route('login') }}" class="non-style-link"><span class="nav-item">LOGIN</span></a>
-                <a href="{{ route('signup') }}" class="non-style-link"><span class="nav-item nav-item-register">REGISTER</span></a>
+                <a href="{{ route('login') }}" class="non-style-link"><span class="nav-item">Login</span></a>
+                <a href="{{ route('signup') }}" class="non-style-link"><span class="nav-item nav-item-register">Register</span></a>
             </div>
         </nav>
 
         <div class="hero-content">
-            <h1 class="heading-text">Book Faculty Consultations<br>Without the Hassle.</h1>
+            <span class="hero-badge">Smart faculty scheduling for SNSU</span>
+            <h1 class="heading-text">Book faculty consultations without the hassle.</h1>
             <p class="sub-text2">
-                Schedule your faculty consultation sessions online — no more long lines,
-                missed meetings, or scheduling conflicts. ConsultEase streamlines the entire process.
+                Schedule consultation sessions online, avoid long lines, and keep everyone aligned with clear booking records,
+                timely updates, and a smoother appointment experience.
             </p>
             <div class="hero-actions">
-                <a href="{{ route('login') }}">
-                    <button class="btn btn-primary hero-btn" id="hero-cta">Make Appointment</button>
-                </a>
-                <a href="#features" class="non-style-link">
-                    <button class="btn hero-btn-outline" id="hero-learn-more">Learn More</button>
-                </a>
+                <a href="{{ route('login') }}" class="btn btn-primary hero-btn non-style-link">Make Appointment</a>
+                <a href="#features" class="hero-btn-outline non-style-link">Learn More</a>
             </div>
         </div>
 
@@ -47,11 +42,10 @@
         </div>
     </section>
 
-    {{-- ═══════════ FEATURES SECTION ═══════════ --}}
     <section class="features-section" id="features">
         <div class="section-container">
             <h2 class="section-title">Why Use ConsultEase?</h2>
-            <p class="section-subtitle">A smarter way to manage faculty consultations at SNSU.</p>
+            <p class="section-subtitle">A cleaner way to manage consultations between students and faculty.</p>
 
             <div class="features-grid">
                 <div class="feature-card">
@@ -64,7 +58,7 @@
                         </svg>
                     </div>
                     <h3 class="feature-title">Easy Scheduling</h3>
-                    <p class="feature-desc">Browse available faculty consultation slots and book your session in just a few clicks.</p>
+                    <p class="feature-desc">Browse available slots and reserve a consultation session in just a few steps.</p>
                 </div>
 
                 <div class="feature-card">
@@ -77,7 +71,7 @@
                         </svg>
                     </div>
                     <h3 class="feature-title">Faculty Directory</h3>
-                    <p class="feature-desc">Find and connect with faculty members across departments. View their available schedules anytime.</p>
+                    <p class="feature-desc">Find faculty members by name or subject and review available sessions quickly.</p>
                 </div>
 
                 <div class="feature-card">
@@ -88,52 +82,47 @@
                         </svg>
                     </div>
                     <h3 class="feature-title">Real-Time Updates</h3>
-                    <p class="feature-desc">Get instant notifications on your appointment status — confirmations, changes, and reminders.</p>
+                    <p class="feature-desc">Stay informed with booking confirmations, schedule changes, and reminders.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    {{-- ═══════════ HOW IT WORKS SECTION ═══════════ --}}
     <section class="steps-section">
         <div class="section-container">
             <h2 class="section-title">How It Works</h2>
-            <p class="section-subtitle">Three simple steps to your next consultation.</p>
+            <p class="section-subtitle">Three clear steps to your next consultation.</p>
 
             <div class="steps-grid">
                 <div class="step-card">
                     <div class="step-number">1</div>
                     <h3 class="step-title">Create an Account</h3>
-                    <p class="step-desc">Sign up as a student or faculty member using your university credentials.</p>
+                    <p class="step-desc">Sign up as a student or faculty member using your university details.</p>
                 </div>
                 <div class="step-connector"></div>
                 <div class="step-card">
                     <div class="step-number">2</div>
                     <h3 class="step-title">Book a Session</h3>
-                    <p class="step-desc">Browse available faculty schedules and reserve a consultation slot that works for you.</p>
+                    <p class="step-desc">Pick an available schedule and reserve the time that works best for you.</p>
                 </div>
                 <div class="step-connector"></div>
                 <div class="step-card">
                     <div class="step-number">3</div>
-                    <h3 class="step-title">Consult & Succeed</h3>
-                    <p class="step-desc">Show up to your appointment on time. Your faculty member will be expecting you.</p>
+                    <h3 class="step-title">Consult With Confidence</h3>
+                    <p class="step-desc">Arrive prepared, track your appointments, and stay aligned with faculty expectations.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    {{-- ═══════════ CTA SECTION ═══════════ --}}
     <section class="cta-section">
         <div class="section-container cta-inner">
-            <h2 class="cta-heading">Ready to Get Started?</h2>
-            <p class="cta-text">Join ConsultEase today and never miss a faculty consultation again.</p>
-            <a href="{{ route('signup') }}">
-                <button class="btn btn-primary hero-btn" id="cta-register">Register Now — It's Free</button>
-            </a>
+            <h2 class="cta-heading">Ready to get started?</h2>
+            <p class="cta-text">Join ConsultEase today and make consultation scheduling easier for everyone.</p>
+            <a href="{{ route('signup') }}" class="btn btn-primary hero-btn non-style-link">Register Now</a>
         </div>
     </section>
 
-    {{-- ═══════════ FOOTER ═══════════ --}}
     <footer class="site-footer">
         <div class="footer-inner">
             <div class="footer-brand">
@@ -141,10 +130,9 @@
                 <span class="footer-tagline">Surigao Del Norte State University</span>
             </div>
             <div class="footer-copy">
-                <p>&copy; 2026 ConsultEase &mdash; A Web Solution by Tannybot.</p>
+                <p>&copy; 2026 ConsultEase. A web solution by Tannybot.</p>
             </div>
         </div>
     </footer>
-
 </body>
 </html>

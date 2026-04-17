@@ -8,80 +8,49 @@
     <link rel="stylesheet" href="{{ asset('css/main.css') }}">
     <link rel="stylesheet" href="{{ asset('css/login.css') }}">
     <link rel="stylesheet" href="{{ asset('css/livewallpaper.css') }}">
-
-    <title>Login</title>
     <link href="{{ asset('css/responsive.css') }}" rel="stylesheet">
+    <title>Login</title>
 </head>
 <body>
     @include('layouts.livewallpaper')
 
-    <center>
-    <div class="container">
-        <table border="0" style="margin: 0;padding: 0;width: 60%;">
-            <tr>
-                <td>
-                    <p class="header-text">Welcome to ConsultEase!</p>
-                </td>
-            </tr>
-        <div class="form-body">
-            <tr>
-                <td>
-                    <p class="sub-text">Login with your details to continue</p>
-                </td>
-            </tr>
-            <tr>
-                <form action="{{ url('/login') }}" method="POST" >
+    <div class="auth-shell">
+        <div class="container auth-card">
+            <div class="auth-card__body">
+                <div class="auth-header">
+                    <span class="auth-header__eyebrow">ConsultEase Access</span>
+                    <p class="header-text">Welcome back</p>
+                    <p class="sub-text">Sign in with your account details to continue to your dashboard.</p>
+                </div>
+
+                <form action="{{ url('/login') }}" method="POST" class="auth-form">
                     @csrf
-                <td class="label-td">
-                    <label for="useremail" class="form-label">Email: </label>
-                </td>
-            </tr>
-            <tr>
-                <td class="label-td">
-                    <input type="email" name="useremail" class="input-text" placeholder="Email Address" required>
-                </td>
-            </tr>
-            <tr>
-                <td class="label-td">
-                    <label for="userpassword" class="form-label">Password: </label>
-                </td>
-            </tr>
 
-            <tr>
-                <td class="label-td">
-                    <input type="Password" name="userpassword" class="input-text" placeholder="Password" required>
-                </td>
-            </tr>
+                    <div class="auth-field">
+                        <label for="useremail" class="form-label">Email</label>
+                        <input id="useremail" type="email" name="useremail" class="input-text" placeholder="Email address" required>
+                    </div>
 
-            <tr>
-                <td><br>
-                @if(session('error'))
-                    <label for="promter" class="form-label" style="color:rgb(255, 62, 62);text-align:center;">{{ session('error') }}</label>
-                @else
-                    <label for="promter" class="form-label">&nbsp;</label>
-                @endif
-                </td>
-            </tr>
+                    <div class="auth-field">
+                        <label for="userpassword" class="form-label">Password</label>
+                        <input id="userpassword" type="password" name="userpassword" class="input-text" placeholder="Password" required>
+                    </div>
 
-            <tr>
-                <td>
-                    <input type="submit" value="Login" class="login-btn btn-primary btn">
-                </td>
-            </tr>
+                    @if(session('error'))
+                        <div class="auth-error">{{ session('error') }}</div>
+                    @endif
+
+                    <div class="auth-actions">
+                        <input type="submit" value="Login" class="login-btn btn-primary btn">
+                    </div>
+                </form>
+
+                <p class="auth-footer">
+                    Do not have an account?
+                    <a href="{{ url('/signup') }}" class="hover-link1 non-style-link">Sign up</a>
+                </p>
+            </div>
         </div>
-            <tr>
-                <td>
-                    <br>
-                    <label for="" class="sub-text" style="font-weight: 280;">Don't have an account&#63; </label>
-                    <a href="{{ url('/signup') }}" class="hover-link1 non-style-link">Sign Up</a>
-                    <br><br><br>
-                </td>
-            </tr>
-
-                    </form>
-        </table>
-
     </div>
-</center>
 </body>
 </html>

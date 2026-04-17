@@ -1,0 +1,84 @@
+/* Shared responsive bridge for legacy Blade screens */
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.mobile-only {
+  display: none !important;
+}
+
+.desktop-only {
+  display: initial !important;
+}
+
+@media screen and (max-width: 1024px) {
+  .desktop-only {
+    display: none !important;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .mobile-only {
+    display: initial !important;
+  }
+
+  .page-toolbar,
+  .page-toolbar__group,
+  .page-action-row,
+  .toolbar-search,
+  .app-form-actions,
+  .dialog-actions {
+    align-items: stretch;
+  }
+
+  .toolbar-search .btn,
+  .page-action-row .btn,
+  .page-action-row .login-btn,
+  .app-form-actions .btn,
+  .dialog-actions .btn {
+    width: 100%;
+  }
+
+  .record-card__actions {
+    flex-direction: column;
+  }
+
+  .settings-card {
+    flex-direction: column;
+  }
+
+  .settings-card__icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .popup .sub-table,
+  .popup table[width="80%"],
+  .popup table[width="100%"] {
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+
+  .popup .abc {
+    max-height: 56vh;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .page-card,
+  .db-panel,
+  .dashboard-items,
+  .settings-card,
+  .record-card {
+    border-radius: 14px;
+  }
+}
