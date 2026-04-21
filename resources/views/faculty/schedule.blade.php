@@ -21,61 +21,8 @@
 </head>
 <body>
  <div class="container">
-     <div class="menu">
-     <table class="menu-container" border="0">
-             <tr>
-                 <td style="padding:10px" colspan="2">
-                     <table border="0" class="profile-container">
-                         <tr>
-                             <td width="30%" style="padding-left:20px" >
-                                 <img src="{{ $faculty->profile_pic ? asset('storage/' . $faculty->profile_pic) : asset('img/user.png') }}" alt="" style="width: 91.85px; height: 91.85px; object-fit: cover; border-radius:50%">
-                             </td>
-                             <td style="padding:0px;margin:0px;">
-                                 <p class="profile-title">{{ substr($faculty->facname,0,13) }}..</p>
-                                 <p class="profile-subtitle">{{ substr($faculty->facemail,0,22) }}</p>
-                             </td>
-                         </tr>
-                         <tr>
-                             <td colspan="2">
-                                <form action="{{ route('logout') }}" method="POST">
-                                    @csrf
-                                    <button type="submit" class="logout-btn btn-primary-soft btn">Log out</button>
-                                </form>
-                             </td>
-                         </tr>
-                 </table>
-                 </td>
-             </tr>
-             <tr class="menu-row" >
-                 <td class="menu-btn menu-icon-dashbord " >
-                     <a href="{{ url('/faculty/dashboard') }}" class="non-style-link-menu "><div><p class="menu-text">Dashboard</p></div></a>
-                 </td>
-             </tr>
-             <tr class="menu-row">
-                 <td class="menu-btn menu-icon-appoinment  ">
-                     <a href="{{ url('/faculty/appointment') }}" class="non-style-link-menu"><div><p class="menu-text">My Appointments</p></div></a>
-                 </td>
-             </tr>
-             
-             <tr class="menu-row" >
-                 <td class="menu-btn menu-icon-session menu-active menu-icon-session-active">
-                     <a href="{{ url('/faculty/schedule') }}" class="non-style-link-menu non-style-link-menu-active"><div><p class="menu-text">My Sessions</p></div></a>
-                 </td>
-             </tr>
-             <tr class="menu-row" >
-                 <td class="menu-btn menu-icon-patient">
-                     <a href="{{ url('/faculty/student') }}" class="non-style-link-menu"><div><p class="menu-text">My Students</p></div></a>
-                 </td>
-             </tr>
-             <tr class="menu-row" >
-                 <td class="menu-btn menu-icon-settings">
-                     <a href="{{ url('/faculty/settings') }}" class="non-style-link-menu"><div><p class="menu-text">Settings</p></div></a>
-                 </td>
-             </tr>
-             
-         </table>
-        </div>
-        <div class="dash-body">
+             @include('shared.sidebar-faculty', ['activePage' => 'schedule'])
+<div class="dash-body">
             <table border="0" width="100%" style=" border-spacing: 0;margin:0;padding:0;margin-top:25px; ">
                 <tr >
                     <td width="13%" >
@@ -254,144 +201,110 @@
         </div>
     @elseif($action=='view')
         <div id="popup1" class="overlay">
-                <div class="popup" style="width: 70%;">
-                <center>
-                    <h2></h2>
+                <div class="popup popup--profile-id popup--profile-id-wide">
                     <a class="close" href="{{ url('/faculty/schedule') }}">&times;</a>
-                    <div class="content">
-                        
-                    </div>
-                    <div class="abc scroll" style="display: flex;justify-content: center;">
-                    <table width="80%" class="sub-table scrolldown add-doc-form-container" border="0">
-                    
-                        <tr>
-                            <td>
-                                <p style="padding: 0;margin: 0;text-align: left;font-size: 25px;font-weight: 500;">View Details.</p><br><br>
-                            </td>
-                        </tr>
-                        
-                        <tr>
-                            
-                            <td class="label-td" colspan="2">
-                                <label for="name" class="form-label">Session Title: </label>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="label-td" colspan="2">
-                                {{ $sessionDetails->title }}<br><br>
-                            </td>
-                            
-                        </tr>
-                        <tr>
-                            <td class="label-td" colspan="2">
-                                <label for="Email" class="form-label">Faculty of this session: </label>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="label-td" colspan="2">
-                            {{ $sessionDetails->facname }}<br><br>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="label-td" colspan="2">
-                            {{ $sessionDetails->scheduledate }}<br><br>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="label-td" colspan="2">
-                                <label for="Tele" class="form-label">Scheduled Time: </label>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="label-td" colspan="2">
-                            {{ $sessionDetails->scheduletime }}<br><br>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="label-td" colspan="2">
-                                <label for="spec" class="form-label"><b>Students that Already registered for this session:</b> ({{ $sessionStudents->count() }}/{{ $sessionDetails->nop }})</label>
-                                <br><br>
-                            </td>
-                        </tr>
+                    <div class="profile-id-card">
+                        <div class="profile-id-card__top">
+                            <div>
+                                <span class="profile-id-card__eyebrow">Session Details</span>
+                                <h2 class="profile-id-card__title">Session Information Card</h2>
+                                <p class="profile-id-card__subtitle">A cleaner session overview with the registered students attached to this consultation slot.</p>
+                            </div>
+                            <div class="profile-id-card__badge">SE-{{ $id }}</div>
+                        </div>
 
-                        
-                        <tr>
-                        <td colspan="4">
-                            <center>
-                                <div class="abc scroll">
-                                <table width="100%" class="sub-table scrolldown" border="0">
-                                <thead>
-                                <tr>   
-                                    <th class="table-headin">
-                                            Student ID
-                                        </th>
-                                        <th class="table-headin">
-                                            Student name
-                                        </th>
-                                        <th class="table-headin">
-
-                                            Appointment number
-
-                                        </th>
-
-
-                                        <th class="table-headin">
-                                            Student Telephone
-                                        </th>
-                                        
-                                </thead>
-                                <tbody>
-                                
-                                @if($sessionStudents->count() == 0)
-                                    <tr>
-                                    <td colspan="7">
-                                    <br><br><br><br>
-                                    <center>
-                                    <img src="{{ asset('img/notfound.svg') }}" width="25%">
-
-                                    <br>
-                                    <p class="heading-main12" style="margin-left: 45px;font-size:20px;color:rgb(49, 49, 49)">We  couldnt find anything related to your keywords !</p>
-                                    <a class="non-style-link" href="{{ url('/faculty/appointment') }}"><button  class="login-btn btn-primary-soft btn"  style="display: flex;justify-content: center;align-items: center;margin-left:20px;">&nbsp; Show all Appointments &nbsp;</font></button>
-                                    </a>
-                                    </center>
-                                    <br><br><br><br>
-                                    </td>
-                                    </tr>
-                                @else
-                                    @foreach($sessionStudents as $student)
-                                        <tr style="text-align:center;">
-                                        <td>
-                                        {{ substr($student->sid,0,15) }}
-                                        </td>
-                                            <td style="font-weight:600;padding:25px;">
-                                            {{ substr($student->sname,0,25) }}
-                                            </td >
-                                            <td style="text-align:center;font-size:23px;font-weight:500; color: var(--btnnicetext);">
-                                            {{ $student->apponum }}
-
-                                            </td>
-                                            <td>
-                                            {{ substr($student->stel,0,25) }}
-                                            </td>
-
-
-
-                                        </tr>
-                                    @endforeach
-                                @endif
-                                        
-                                </tbody>
-            
-                                </table>
+                        <div class="profile-id-card__hero">
+                            <div class="profile-id-card__avatar-wrap">
+                                <img src="{{ asset('img/calendar.svg') }}" alt="Session calendar" class="profile-id-card__avatar">
+                            </div>
+                            <div class="profile-id-card__hero-copy">
+                                <p class="profile-id-card__role">Scheduled Session</p>
+                                <h3 class="profile-id-card__name">{{ $sessionDetails->title }}</h3>
+                                <p class="profile-id-card__meta">{{ $sessionDetails->facname }}</p>
+                                <div class="profile-id-card__chips">
+                                    <span class="status-chip status-chip--success">Registered {{ $sessionStudents->count() }}/{{ $sessionDetails->nop }}</span>
+                                    <span class="profile-id-card__micro">{{ $sessionDetails->scheduledate }} at {{ $sessionDetails->scheduletime }}</span>
                                 </div>
-                                </center>
-                        </td> 
-                        </tr>
+                            </div>
+                        </div>
 
-                    </table>
+                        <div class="profile-id-card__grid">
+                            <div class="profile-id-card__field">
+                                <span class="profile-id-card__label">Session ID</span>
+                                <div class="profile-id-card__value">SE-{{ $id }}</div>
+                            </div>
+                            <div class="profile-id-card__field">
+                                <span class="profile-id-card__label">Faculty</span>
+                                <div class="profile-id-card__value">{{ $sessionDetails->facname }}</div>
+                            </div>
+                            <div class="profile-id-card__field">
+                                <span class="profile-id-card__label">Scheduled Date</span>
+                                <div class="profile-id-card__value">{{ $sessionDetails->scheduledate }}</div>
+                            </div>
+                            <div class="profile-id-card__field">
+                                <span class="profile-id-card__label">Scheduled Time</span>
+                                <div class="profile-id-card__value">{{ $sessionDetails->scheduletime }}</div>
+                            </div>
+                            <div class="profile-id-card__field profile-id-card__field--wide">
+                                <span class="profile-id-card__label">Capacity</span>
+                                <div class="profile-id-card__value">{{ $sessionStudents->count() }} registered out of {{ $sessionDetails->nop }} total slots.</div>
+                            </div>
+                        </div>
+
+                        <div class="profile-id-card__section">
+                            <div class="profile-id-card__section-head">
+                                <div>
+                                    <span class="profile-id-card__label">Registered Students</span>
+                                    <p class="profile-id-card__section-copy">Students already enrolled in this session appear below.</p>
+                                </div>
+                            </div>
+                            <div class="profile-id-card__table-wrap">
+                                <table width="100%" class="sub-table scrolldown" border="0">
+                                    <thead>
+                                        <tr>
+                                            <th class="table-headin">Student ID</th>
+                                            <th class="table-headin">Student name</th>
+                                            <th class="table-headin">Appointment number</th>
+                                            <th class="table-headin">Student Telephone</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if($sessionStudents->count() == 0)
+                                            <tr>
+                                                <td colspan="4">
+                                                    <br><br><br><br>
+                                                    <center>
+                                                        <img src="{{ asset('img/notfound.svg') }}" width="25%">
+                                                        <br>
+                                                        <p class="heading-main12" style="margin-left: 45px;font-size:20px;color:rgb(49, 49, 49)">We couldnt find anything related to your keywords !</p>
+                                                        <a class="non-style-link" href="{{ url('/faculty/appointment') }}">
+                                                            <button class="login-btn btn-primary-soft btn" style="display: flex;justify-content: center;align-items: center;margin-left:20px;">&nbsp; Show all Appointments &nbsp;</button>
+                                                        </a>
+                                                    </center>
+                                                    <br><br><br><br>
+                                                </td>
+                                            </tr>
+                                        @else
+                                            @foreach($sessionStudents as $student)
+                                                <tr style="text-align:center;">
+                                                    <td>{{ substr($student->sid,0,15) }}</td>
+                                                    <td style="font-weight:600;padding:25px;">{{ substr($student->sname,0,25) }}</td>
+                                                    <td style="text-align:center;font-size:23px;font-weight:500; color: var(--btnnicetext);">{{ $student->apponum }}</td>
+                                                    <td>{{ substr($student->stel,0,25) }}</td>
+                                                </tr>
+                                            @endforeach
+                                        @endif
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="dialog-actions" style="padding: 0 24px 24px;">
+                            <a href="{{ url('/faculty/schedule') }}" class="non-style-link">
+                                <button class="btn-primary-soft btn">Close Card</button>
+                            </a>
+                        </div>
                     </div>
-                </center>
-                <br><br>
         </div>
         </div>
     @endif
@@ -400,3 +313,4 @@
     @include('shared.notifications')
 </body>
 </html>
+

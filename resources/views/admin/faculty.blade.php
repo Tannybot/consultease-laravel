@@ -19,65 +19,8 @@
 </head>
 <body>
     <div class="container">
-        <div class="menu">
-            <table class="menu-container" border="0">
-                <tr>
-                    <td style="padding:10px" colspan="2">
-                        <table border="0" class="profile-container">
-                            <tr>
-                                <td width="30%" style="padding-left:20px">
-                                    <img src="{{ asset('img/user.png') }}" alt="Administrator" style="width: 91.85px; height: 91.85px; border-radius:50%">
-                                </td>
-                                <td style="padding:0;margin:0;">
-                                    <p class="profile-title">Administrator</p>
-                                    <p class="profile-subtitle">{{ $admin->aemail }}</p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="2">
-                                    <form action="{{ route('logout') }}" method="POST">
-                                        @csrf
-                                        <button type="submit" class="logout-btn btn-primary-soft btn">Log out</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-                <tr class="menu-row">
-                    <td class="menu-btn menu-icon-dashbord">
-                        <a href="{{ url('/admin/dashboard') }}" class="non-style-link-menu"><div><p class="menu-text">Dashboard</p></div></a>
-                    </td>
-                </tr>
-                <tr class="menu-row">
-                    <td class="menu-btn menu-icon-faculty menu-active menu-icon-faculty-active">
-                        <a href="{{ url('/admin/faculty') }}" class="non-style-link-menu non-style-link-menu-active"><div><p class="menu-text">Faculty</p></div></a>
-                    </td>
-                </tr>
-                <tr class="menu-row">
-                    <td class="menu-btn menu-icon-schedule">
-                        <a href="{{ url('/admin/schedule') }}" class="non-style-link-menu"><div><p class="menu-text">Schedule</p></div></a>
-                    </td>
-                </tr>
-                <tr class="menu-row">
-                    <td class="menu-btn menu-icon-appoinment">
-                        <a href="{{ url('/admin/appointment') }}" class="non-style-link-menu"><div><p class="menu-text">Appointment</p></div></a>
-                    </td>
-                </tr>
-                <tr class="menu-row">
-                    <td class="menu-btn menu-icon-student">
-                        <a href="{{ url('/admin/student') }}" class="non-style-link-menu"><div><p class="menu-text">Students</p></div></a>
-                    </td>
-                </tr>
-                <tr class="menu-row">
-                    <td class="menu-btn menu-icon-settings">
-                        <a href="{{ url('/admin/settings') }}" class="non-style-link-menu"><div><p class="menu-text">Profile</p></div></a>
-                    </td>
-                </tr>
-            </table>
-        </div>
-
-        <div class="dash-body">
+                @include('shared.sidebar-admin', ['activePage' => 'faculty'])
+<div class="dash-body">
             <div class="page-shell">
                 <div class="page-toolbar">
                     <div class="page-toolbar__group">
@@ -127,6 +70,12 @@
                         </datalist>
                         <input type="submit" value="Search" class="btn btn-primary-soft">
                     </form>
+
+                    <datalist id="subject-options">
+                        @foreach($subjects as $subject)
+                            <option value="{{ $subject->sname }}"></option>
+                        @endforeach
+                    </datalist>
                 </div>
 
                 <div class="page-card">
@@ -156,7 +105,8 @@
                                     </div>
 
                                     <div>
-                                        <p class="record-card__meta"><strong>Subject:</strong> {{ substr($fac->subject,0,40) }}</p>
+                                        @php $facultySubjectName = optional($subjects->firstWhere('id', (int) $fac->subject))->sname ?? $fac->subject; @endphp
+                                        <p class="record-card__meta"><strong>Subject:</strong> {{ substr($facultySubjectName,0,40) }}</p>
                                     </div>
 
                                     <div class="record-card__actions">
@@ -226,7 +176,7 @@
                             </div>
                             <div class="detail-list__item">
                                 <span class="detail-list__label">Subject</span>
-                                <div class="detail-list__value">{{ $facultyDetails->subject }}</div>
+                                <div class="detail-list__value">{{ optional($subjects->firstWhere('id', (int) $facultyDetails->subject))->sname ?? $facultyDetails->subject }}</div>
                             </div>
                         </div>
                         <div class="dialog-actions">
@@ -243,7 +193,7 @@
             $errorlist = [
                 '1' => 'Already have an account for this email address.',
                 '2' => 'Password confirmation error. Please confirm your password again.',
-                '3' => '',
+                '3' => 'Please provide a valid subject.',
                 '4' => '',
                 '0' => '',
             ];
@@ -282,7 +232,7 @@
                                     </div>
                                     <div class="full auth-field">
                                         <label for="add_spec" class="form-label">Subject</label>
-                                        <input id="add_spec" type="text" name="spec" class="input-text" placeholder="Subject" required>
+                                        <input id="add_spec" type="text" name="spec" class="input-text" placeholder="Subject" list="subject-options" required>
                                     </div>
                                     <div class="auth-field">
                                         <label for="add_password" class="form-label">Password</label>
@@ -322,7 +272,7 @@
             $errorlist = [
                 '1' => 'Already have an account for this email address.',
                 '2' => 'Password confirmation error. Please confirm your password again.',
-                '3' => '',
+                '3' => 'Please provide a valid subject.',
                 '4' => '',
                 '0' => '',
             ];
@@ -365,7 +315,7 @@
                                     </div>
                                     <div class="auth-field">
                                         <label for="edit_spec" class="form-label">Subject</label>
-                                        <input id="edit_spec" type="text" name="spec" class="input-text" placeholder="Subject" value="{{ $facultyDetails->subject }}" required>
+                                        <input id="edit_spec" type="text" name="spec" class="input-text" placeholder="Subject" list="subject-options" value="{{ optional($subjects->firstWhere('id', (int) $facultyDetails->subject))->sname ?? $facultyDetails->subject }}" required>
                                     </div>
                                     <div class="auth-field">
                                         <label for="edit_password" class="form-label">Password</label>
@@ -402,5 +352,8 @@
             </div>
         @endif
     @endif
+
+    @include('shared.notifications')
 </body>
 </html>
+

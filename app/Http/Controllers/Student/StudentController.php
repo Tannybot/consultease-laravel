@@ -15,9 +15,8 @@ class StudentController extends Controller
 {
     public function dashboard()
     {
-        $useremail = Session::get('user');
-        $student = Student::where('semail', $useremail)->first();
-        if (!$student) { return redirect('/login'); }
+        $student = $this->authenticatedStudent();
+        if (!$student) { return $this->redirectToLogin(); }
 
         $today = date('Y-m-d');
         $facultyCount = Faculty::count();
@@ -41,9 +40,8 @@ class StudentController extends Controller
 
     public function faculty(Request $request)
     {
-        $useremail = Session::get('user');
-        $student = Student::where('semail', $useremail)->first();
-        if (!$student) { return redirect('/login'); }
+        $student = $this->authenticatedStudent();
+        if (!$student) { return $this->redirectToLogin(); }
 
         $query = Faculty::query();
         if ($request->isMethod('post') && $request->has('search')) {
@@ -79,9 +77,9 @@ class StudentController extends Controller
 
     public function schedule(Request $request)
     {
-        $useremail = Session::get('user');
-        $student = Student::where('semail', $useremail)->first();
-        if (!$student) { return redirect('/login'); }
+        $student = $this->authenticatedStudent();
+        if (!$student) { return $this->redirectToLogin(); }
+        $useremail = $student->semail;
 
         $today = date('Y-m-d');
         $query = DB::table('schedule')->join('faculty', 'schedule.facid', '=', 'faculty.facid')->where('schedule.scheduledate', '>=', $today);
@@ -122,9 +120,8 @@ class StudentController extends Controller
 
     public function addSession(Request $request)
     {
-        $useremail = Session::get('user');
-        $student = Student::where('semail', $useremail)->first();
-        if (!$student) { return redirect('/login'); }
+        $student = $this->authenticatedStudent();
+        if (!$student) { return $this->redirectToLogin(); }
 
         $request->validate(['title' => 'required|string', 'docid' => 'required|integer', 'nop' => 'required|integer', 'date' => 'required|date', 'time' => 'required']);
         $title = $request->input('title');
@@ -166,9 +163,8 @@ class StudentController extends Controller
 
     public function appointment(Request $request)
     {
-        $useremail = Session::get('user');
-        $student = Student::where('semail', $useremail)->first();
-        if (!$student) { return redirect('/login'); }
+        $student = $this->authenticatedStudent();
+        if (!$student) { return $this->redirectToLogin(); }
 
         $today = date('Y-m-d');
         $query = DB::table('schedule')
@@ -207,17 +203,17 @@ class StudentController extends Controller
 
     public function settings(Request $request)
     {
-        $useremail = Session::get('user');
-        $student = Student::where('semail', $useremail)->first();
-        if (!$student) { return redirect('/login'); }
+        $student = $this->authenticatedStudent();
+        if (!$student) { return $this->redirectToLogin(); }
+        $useremail = $student->semail;
 
         $today = date('Y-m-d');
         $action = $request->query('action', '');
-        $id = $request->query('id', '');
+        $id = (string) $student->sid;
         $error = $request->query('error', '0');
         $nameget = $request->query('name', '');
         $viewStudent = null;
-        if ($action == 'view' || $action == 'edit') { $viewStudent = Student::where('sid', $id)->first(); }
+        if ($action == 'view' || $action == 'edit') { $viewStudent = $student; }
         $webuser = WebUser::where('email', $useremail)->first();
 
         return view('student.settings', compact('student', 'today', 'action', 'id', 'error', 'nameget', 'viewStudent', 'webuser'));
@@ -225,16 +221,29 @@ class StudentController extends Controller
 
     public function editStudent(Request $request)
     {
-        $id = $request->input('id00');
+        $student = $this->authenticatedStudent();
+        if (!$student) { return $this->redirectToLogin(); }
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'Tele' => 'required|regex:/^\d{11}$/',
+            'address' => 'required|string|max:255',
+            'password' => 'required|string|min:8',
+            'cpassword' => 'required|same:password',
+            'profile_pic' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+        ]);
+
+        $id = $student->sid;
         $name = $request->input('name');
-        $oldemail = $request->input('oldemail');
+        $oldemail = $student->semail;
         $email = $request->input('email');
         $tele = $request->input('Tele');
         $address = $request->input('address');
         $password = $request->input('password');
         $cpassword = $request->input('cpassword');
 
-        $updateData = ['sname' => $name, 'spassword' => $password, 'stel' => $tele, 'saddress' => $address];
+        $updateData = ['sname' => $name, 'spassword' => $this->hashPassword($password), 'stel' => $tele, 'saddress' => $address];
         if ($request->hasFile('profile_pic')) {
             $path = $request->file('profile_pic')->store('profile_pictures', 'public');
             $updateData['profile_pic'] = $path;
@@ -243,18 +252,14 @@ class StudentController extends Controller
         if ($password == $cpassword) {
             $error = '3';
             $existingUser = DB::table('webuser')->where('email', $email)->first();
-            if ($existingUser || $existingUser->email == $oldemail) {
-                if ($oldemail != $email && $existingUser) { $error = '1'; }
-                else {
-                    $updateData['semail'] = $email;
-                    DB::table('student')->where('sid', $id)->update($updateData);
-                    DB::table('webuser')->where('email', $oldemail)->update(['email' => $email]);
-                    $error = '4';
-                }
-            } else {
+            if ($existingUser && $oldemail != $email) {
+                $error = '1';
+            }
+            else {
                 $updateData['semail'] = $email;
                 DB::table('student')->where('sid', $id)->update($updateData);
                 DB::table('webuser')->where('email', $oldemail)->update(['email' => $email]);
+                Session::put('user', $email);
                 $error = '4';
             }
         } else { $error = '2'; }
@@ -264,12 +269,14 @@ class StudentController extends Controller
 
     public function deleteAccount(Request $request)
     {
-        $id = $request->query('id');
-        $useremail = Session::get('user');
-        DB::table('student')->where('sid', $id)->delete();
-        DB::table('webuser')->where('email', $useremail)->delete();
-        Session::forget('user');
-        Session::forget('usertype');
-        return redirect('/login');
+        $student = $this->authenticatedStudent();
+        if (!$student) { return $this->redirectToLogin(); }
+
+        DB::table('student')->where('sid', $student->sid)->delete();
+        DB::table('webuser')->where('email', $student->semail)->delete();
+        Session::flush();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return $this->redirectToLogin();
     }
 }

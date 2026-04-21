@@ -21,86 +21,29 @@
 </head>
 <body>
     <div class="container">
-        <div class="menu">
-            <table class="menu-container" border="0">
-                <tr>
-                    <td style="padding:10px" colspan="2">
-                        <table border="0" class="profile-container">
-                            <tr>
-                                <td width="30%" style="padding-left:20px" >
-                                    <img src="{{ $student->profile_pic ? asset('storage/' . $student->profile_pic) : asset('img/user.png') }}" alt="" style="width: 91.85px; height: 91.85px; object-fit: cover; border-radius:50%">
-                                </td>
-                                <td style="padding:0px;margin:0px;">
-                                    <p class="profile-title">{{ substr($student->sname,0,13) }}..</p>
-                                    <p class="profile-subtitle">{{ substr($student->semail,0,22) }}</p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="2">
-                                    <form action="{{ route('logout') }}" method="POST">
-                                        @csrf
-                                        <button type="submit" class="logout-btn btn-primary-soft btn">Log out</button>
-                                    </form>
-                                </td>
-                            </tr>
-                    </table>
-                    </td>
-
-                </tr>
-                <tr class="menu-row" >
-                    <td class="menu-btn menu-icon-home " >
-                        <a href="{{ url('/student/dashboard') }}" class="non-style-link-menu "><div><p class="menu-text">Home</p></div></a>
-                    </td>
-                </tr>
-                <tr class="menu-row">
-                    <td class="menu-btn menu-icon-faculty menu-active menu-icon-faculty-active">
-                        <a href="{{ url('/student/faculty') }}" class="non-style-link-menu non-style-link-menu-active"><div><p class="menu-text">My Faculty</p></div></a>
-                    </td>
-                </tr>
-
-                <tr class="menu-row" >
-                    <td class="menu-btn menu-icon-session">
-                        <a href="{{ url('/student/schedule') }}" class="non-style-link-menu"><div><p class="menu-text">Scheduled Sessions</p></div></a>
-                    </td>
-                </tr>
-                <tr class="menu-row" >
-                    <td class="menu-btn menu-icon-appoinment">
-                        <a href="{{ url('/student/appointment') }}" class="non-style-link-menu"><div><p class="menu-text">My Bookings</p></div></a>
-                    </td>
-                </tr>
-                <tr class="menu-row" >
-                    <td class="menu-btn menu-icon-settings">
-                        <a href="{{ url('/student/settings') }}" class="non-style-link-menu"><div><p class="menu-text">Settings</p></div></a>
-                    </td>
-                </tr>
-                <tr class="menu-row" >
-                    <td class="menu-btn menu-icon-notifications" id="notification-btn">
-                        <div><p class="menu-text">Notifications</p></div>
-                    </td>
-                </tr>
-
-            </table>
-        </div>
-        <div class="dash-body">
+                @include('shared.sidebar-student', ['activePage' => 'faculty'])
+<div class="dash-body">
             <table border="0" width="100%" style=" border-spacing: 0;margin:0;padding:0;margin-top:25px; ">
                 <tr >
                     <td width="13%">
                         <a href="{{ url('/student/dashboard') }}" ><button  class="login-btn btn-primary-soft btn btn-icon-back"  style="padding-top:11px;padding-bottom:11px;margin-left:20px;width:125px"><font class="tn-in-text">Back</font></button></a>
                     </td>
                     <td>
+                        <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+                            @include('shared.hamburger')
+                            <form action="{{ url('/student/faculty') }}" method="post" class="header-search" style="flex:1 1 320px;">
+                                @csrf
+                                <input type="search" name="search" class="input-text header-searchbar" placeholder="Search Faculty name or Email" list="faculty">&nbsp;&nbsp;
+                                <datalist id="faculty">
+                                    @foreach($faculties as $faculty)
+                                        <option value="{{ $faculty->facname }}"></option>
+                                        <option value="{{ $faculty->facemail }}"></option>
+                                    @endforeach
+                                </datalist>
 
-                        <form action="{{ url('/student/faculty') }}" method="post" class="header-search">
-                            @csrf
-                            <input type="search" name="search" class="input-text header-searchbar" placeholder="Search Faculty name or Email" list="faculty">&nbsp;&nbsp;
-                            <datalist id="faculty">
-                                @foreach($faculties as $faculty)
-                                    <option value="{{ $faculty->facname }}"></option>
-                                    <option value="{{ $faculty->facemail }}"></option>
-                                @endforeach
-                            </datalist>
-
-                            <input type="Submit" value="Search" class="login-btn btn-primary btn" style="padding-left: 25px;padding-right: 25px;padding-top: 10px;padding-bottom: 10px;">
-                        </form>
+                                <input type="Submit" value="Search" class="login-btn btn-primary btn" style="padding-left: 25px;padding-right: 25px;padding-top: 10px;padding-bottom: 10px;">
+                            </form>
+                        </div>
 
                     </td>
                     <td width="15%">
@@ -187,67 +130,66 @@
 
     @if($action == 'view')
         <div id="popup1" class="overlay">
-            <div class="popup">
-                <center>
-                    <h2></h2>
+            <div class="popup popup--profile-id">
                     <a class="close" href="{{ url('/student/faculty') }}">&times;</a>
-                    <div class="content">eDoc Web App<br></div>
-                    <div style="display: flex;justify-content: center;">
-                        <table width="80%" class="sub-table scrolldown add-doc-form-container" border="0">
-                            <tr>
-                                <td>
-                                    <p style="padding: 0;margin: 0;text-align: left;font-size: 25px;font-weight: 500;">View Details.</p><br><br>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="label-td" colspan="2">
-                                    <label for="name" class="form-label">Name: </label>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="label-td" colspan="2">
-                                    {{ $selectedFaculty->facname }}<br><br>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="label-td" colspan="2">
-                                    <label for="Email" class="form-label">Email: </label>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="label-td" colspan="2">
-                                    {{ $selectedFaculty->facemail }}<br><br>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="label-td" colspan="2">
-                                    <label for="Tele" class="form-label">Telephone: </label>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="label-td" colspan="2">
-                                    {{ $selectedFaculty->factel }}<br><br>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="label-td" colspan="2">
-                                    <label for="spec" class="form-label">Subject: </label>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="label-td" colspan="2">
-                                    {{ $spcil_name }}<br><br>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="2">
-                                    <a href="{{ url('/student/faculty') }}"><input type="button" value="OK" class="login-btn btn-primary-soft btn" ></a>
-                                </td>
-                            </tr>
-                        </table>
+                    <div class="profile-id-card">
+                        <div class="profile-id-card__top">
+                            <div>
+                                <span class="profile-id-card__eyebrow">Faculty Profile</span>
+                                <h2 class="profile-id-card__title">Faculty Information Card</h2>
+                                <p class="profile-id-card__subtitle">A cleaner ID-style summary so students can quickly verify faculty details before booking.</p>
+                            </div>
+                            <div class="profile-id-card__badge">F-{{ $selectedFaculty->facid ?? '--' }}</div>
+                        </div>
+
+                        <div class="profile-id-card__hero">
+                            <div class="profile-id-card__avatar-wrap">
+                                <img
+                                    src="{{ $selectedFaculty->profile_pic ? asset('storage/' . $selectedFaculty->profile_pic) : asset('img/user.png') }}"
+                                    alt="{{ $selectedFaculty->facname }}"
+                                    class="profile-id-card__avatar"
+                                >
+                            </div>
+                            <div class="profile-id-card__hero-copy">
+                                <p class="profile-id-card__role">Faculty Member</p>
+                                <h3 class="profile-id-card__name">{{ $selectedFaculty->facname }}</h3>
+                                <p class="profile-id-card__meta">{{ $selectedFaculty->facemail }}</p>
+                                <div class="profile-id-card__chips">
+                                    <span class="status-chip status-chip--success">Available for Booking</span>
+                                    <span class="profile-id-card__micro">Faculty ID {{ $selectedFaculty->facid ?? '--' }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="profile-id-card__grid">
+                            <div class="profile-id-card__field">
+                                <span class="profile-id-card__label">Faculty ID</span>
+                                <div class="profile-id-card__value">F-{{ $selectedFaculty->facid ?? '--' }}</div>
+                            </div>
+                            <div class="profile-id-card__field">
+                                <span class="profile-id-card__label">Subject</span>
+                                <div class="profile-id-card__value">{{ $spcil_name }}</div>
+                            </div>
+                            <div class="profile-id-card__field">
+                                <span class="profile-id-card__label">Telephone</span>
+                                <div class="profile-id-card__value">{{ $selectedFaculty->factel }}</div>
+                            </div>
+                            <div class="profile-id-card__field">
+                                <span class="profile-id-card__label">Email</span>
+                                <div class="profile-id-card__value">{{ $selectedFaculty->facemail }}</div>
+                            </div>
+                            <div class="profile-id-card__field profile-id-card__field--wide">
+                                <span class="profile-id-card__label">Role</span>
+                                <div class="profile-id-card__value">Faculty Member</div>
+                            </div>
+                        </div>
+
+                        <div class="dialog-actions" style="padding: 0 24px 24px;">
+                            <a href="{{ url('/student/faculty') }}" class="non-style-link">
+                                <button class="btn-primary-soft btn">Close Card</button>
+                            </a>
+                        </div>
                     </div>
-                </center>
-                <br><br>
             </div>
         </div>
     @elseif($action == 'availability')
@@ -326,3 +268,4 @@
     @include('shared.notifications')
 </body>
 </html>
+

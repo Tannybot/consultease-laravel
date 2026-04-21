@@ -71,6 +71,22 @@
   .popup .abc {
     max-height: 56vh;
   }
+
+  .menu--fixed .app-profile-media {
+    align-items: flex-start;
+  }
+
+  .notification-panel {
+    width: min(100vw, 360px);
+  }
+
+  .notification-header {
+    padding: 18px;
+  }
+
+  .notification-list {
+    padding: 12px;
+  }
 }
 
 @media screen and (max-width: 480px) {
@@ -80,5 +96,18 @@
   .settings-card,
   .record-card {
     border-radius: 14px;
+  }
+
+  .menu--fixed {
+    padding-bottom: 18px;
+  }
+
+  .menu--fixed .app-sidebar-nav {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .notification-item {
+    padding: 14px;
   }
 }

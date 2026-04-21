@@ -8,36 +8,46 @@ use App\Models\Auth\WebNotification;
 use App\Models\Student\Student;
 use App\Models\Faculty\Faculty;
 use App\Models\Admin\Admin;
-use Illuminate\Support\Facades\Session;
 
 class NotificationController extends Controller
 {
-    public function fetch(Request $request)
+    private function resolveCurrentNotificationUser(): array
     {
-        $userEmail = Session::get('user');
-        $usertype = Session::get('usertype');
+        $userEmail = $this->sessionUserEmail();
+        $usertype = $this->sessionUserType();
 
         if (!$userEmail || !$usertype) {
-            return response()->json(['error' => 'Unauthenticated'], 401);
+            return [null, null];
         }
 
-        $userId = null;
+        $typeString = null;
+
         if ($usertype === 's') {
-            $student = Student::where('semail', $userEmail)->first();
-            if ($student) $userId = $student->sid;
+            $exists = Student::where('semail', $userEmail)->exists();
             $typeString = 'student';
-        } elseif ($usertype === 'd') {
-            $faculty = Faculty::where('facemail', $userEmail)->first();
-            if ($faculty) $userId = $faculty->facid;
+        } elseif ($usertype === 'd' || $usertype === 'f') {
+            $exists = Faculty::where('facemail', $userEmail)->exists();
             $typeString = 'faculty';
         } elseif ($usertype === 'a') {
-            $admin = Admin::where('aemail', $userEmail)->first();
-            if ($admin) $userId = $admin->aemail;
+            $exists = Admin::where('aemail', $userEmail)->exists();
             $typeString = 'admin';
+        } else {
+            $exists = false;
         }
 
-        if (!$userId) {
-            return response()->json(['error' => 'User not found'], 404);
+        if (!$exists || !$typeString) {
+            return [null, null];
+        }
+
+        return [$userEmail, $typeString];
+    }
+
+    public function fetch(Request $request)
+    {
+        [$userId, $typeString] = $this->resolveCurrentNotificationUser();
+
+        if (!$userId || !$typeString) {
+            return response()->json(['error' => 'Unauthenticated'], 401);
         }
 
         $notifications = WebNotification::where('user_id', $userId)
@@ -56,24 +66,21 @@ class NotificationController extends Controller
     public function markAsRead(Request $request)
     {
         $id = $request->input('id');
-        $userEmail = Session::get('user');
-        $usertype = Session::get('usertype');
+        [$userId, $typeString] = $this->resolveCurrentNotificationUser();
 
-        if (!$userEmail || !$usertype) {
+        if (!$userId || !$typeString) {
             return response()->json(['error' => 'Unauthenticated'], 401);
         }
 
         if ($id) {
-            WebNotification::where('id', $id)->update(['is_read' => true]);
+            WebNotification::where('id', $id)
+                ->where('user_id', $userId)
+                ->where('user_type', $typeString)
+                ->update(['is_read' => true]);
         } else {
-            $userId = null;
-            if ($usertype === 's') $userId = Student::where('semail', $userEmail)->value('sid');
-            elseif ($usertype === 'd') $userId = Faculty::where('facemail', $userEmail)->value('facid');
-            elseif ($usertype === 'a') $userId = Admin::where('aemail', $userEmail)->value('aemail');
-
-            if ($userId) {
-                WebNotification::where('user_id', $userId)->update(['is_read' => true]);
-            }
+            WebNotification::where('user_id', $userId)
+                ->where('user_type', $typeString)
+                ->update(['is_read' => true]);
         }
 
         return response()->json(['success' => true]);
@@ -82,15 +89,19 @@ class NotificationController extends Controller
     public function log(Request $request)
     {
         $request->validate([
-            'user_id' => 'required',
-            'user_type' => 'required',
-            'title' => 'required',
-            'message' => 'required'
+            'title' => 'required|string|max:150',
+            'message' => 'required|string|max:1000'
         ]);
 
+        [$userId, $userType] = $this->resolveCurrentNotificationUser();
+
+        if (!$userId || !$userType) {
+            return response()->json(['error' => 'Unauthenticated'], 401);
+        }
+
         WebNotification::create([
-            'user_id' => $request->input('user_id'),
-            'user_type' => $request->input('user_type'),
+            'user_id' => (string) $userId,
+            'user_type' => $userType,
             'title' => $request->input('title'),
             'message' => $request->input('message'),
             'is_read' => false

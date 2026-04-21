@@ -19,65 +19,8 @@
 </head>
 <body>
     <div class="container">
-        <div class="menu" id="menu">
-            <table class="menu-container" border="0">
-                <tr>
-                    <td style="padding:10px" colspan="2">
-                        <table border="0" class="profile-container">
-                            <tr>
-                                <td width="30%" style="padding-left:20px">
-                                    <img src="{{ $student->profile_pic ? asset('storage/' . $student->profile_pic) : asset('img/user.png') }}" alt="User icon" style="width: 91.85px; height: 91.85px; object-fit: cover; border-radius:50%">
-                                </td>
-                                <td style="padding:0;margin:0;">
-                                    <p class="profile-title">{{ substr($student->sname,0,13) }}..</p>
-                                    <p class="profile-subtitle">{{ substr($student->semail,0,22) }}</p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="2">
-                                    <form action="{{ route('logout') }}" method="POST">
-                                        @csrf
-                                        <button type="submit" class="logout-btn btn-primary-soft btn">Log out</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-                <tr class="menu-row">
-                    <td class="menu-btn menu-icon-home">
-                        <a href="{{ url('/student/dashboard') }}" class="non-style-link-menu"><div><p class="menu-text">Home</p></div></a>
-                    </td>
-                </tr>
-                <tr class="menu-row">
-                    <td class="menu-btn menu-icon-faculty">
-                        <a href="{{ url('/student/faculty') }}" class="non-style-link-menu"><div><p class="menu-text">All Faculty</p></div></a>
-                    </td>
-                </tr>
-                <tr class="menu-row">
-                    <td class="menu-btn menu-icon-session">
-                        <a href="{{ url('/student/schedule') }}" class="non-style-link-menu"><div><p class="menu-text">Scheduled Sessions</p></div></a>
-                    </td>
-                </tr>
-                <tr class="menu-row">
-                    <td class="menu-btn menu-icon-appoinment menu-active menu-icon-appoinment-active">
-                        <a href="{{ url('/student/appointment') }}" class="non-style-link-menu non-style-link-menu-active"><div><p class="menu-text">My Bookings</p></div></a>
-                    </td>
-                </tr>
-                <tr class="menu-row">
-                    <td class="menu-btn menu-icon-settings">
-                        <a href="{{ url('/student/settings') }}" class="non-style-link-menu"><div><p class="menu-text">Settings</p></div></a>
-                    </td>
-                </tr>
-                <tr class="menu-row">
-                    <td class="menu-btn menu-icon-notifications" id="notification-btn">
-                        <div><p class="menu-text">Notifications</p></div>
-                    </td>
-                </tr>
-            </table>
-        </div>
-
-        <div class="dash-body" id="dash-body">
+                @include('shared.sidebar-student', ['activePage' => 'appointment'])
+<div class="dash-body" id="dash-body">
             <div class="page-shell">
                 <div class="page-toolbar">
                     <div class="page-toolbar__group">
@@ -209,3 +152,4 @@
     @include('shared.notifications')
 </body>
 </html>
+

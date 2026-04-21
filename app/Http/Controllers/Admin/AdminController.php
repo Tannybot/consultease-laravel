@@ -12,11 +12,9 @@ class AdminController extends Controller
 {
     public function dashboard()
     {
-        $useremail = Session::get('user');
-
-        $admin = Admin::where('aemail', $useremail)->first();
+        $admin = $this->authenticatedAdmin();
         if (!$admin) {
-            return redirect('/login');
+            return $this->redirectToLogin();
         }
 
         $today = date('Y-m-d');
@@ -58,10 +56,9 @@ class AdminController extends Controller
 
     public function faculty(Request $request)
     {
-        $useremail = Session::get('user');
-        $admin = Admin::where('aemail', $useremail)->first();
+        $admin = $this->authenticatedAdmin();
         if (!$admin) {
-            return redirect('/login');
+            return $this->redirectToLogin();
         }
 
         $today = date('Y-m-d');
@@ -71,6 +68,7 @@ class AdminController extends Controller
         $nameget = $request->query('name', '');
 
         $facultyList = DB::table('faculty')->select('facname', 'facemail')->get();
+        $subjects = $this->subjectOptions();
 
         $query = DB::table('faculty');
         if ($request->isMethod('post') && $request->has('search')) {
@@ -89,18 +87,32 @@ class AdminController extends Controller
         }
 
         return view('admin.faculty', compact(
-            'admin', 'today', 'action', 'id', 'error_1', 'nameget', 'facultyList', 'faculties', 'facultyDetails'
+            'admin', 'today', 'action', 'id', 'error_1', 'nameget', 'facultyList', 'faculties', 'facultyDetails', 'subjects'
         ));
     }
 
     public function addFaculty(Request $request)
     {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'spec' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'Tele' => 'required|regex:/^\d{11}$/',
+            'password' => 'required|string|min:8',
+            'cpassword' => 'required|same:password',
+        ]);
+
         $name = $request->input('name');
         $spec = $request->input('spec');
         $email = $request->input('email');
         $tele = $request->input('Tele');
         $password = $request->input('password');
         $cpassword = $request->input('cpassword');
+        $subjectId = $this->resolveSubjectId($spec);
+
+        if (!$subjectId) {
+            return redirect('/admin/faculty?action=add&id=none&error=3');
+        }
 
         if ($password == $cpassword) {
             $existingUser = DB::table('webuser')->where('email', $email)->first();
@@ -112,9 +124,9 @@ class AdminController extends Controller
                 DB::table('faculty')->insert([
                     'facemail' => $email,
                     'facname' => $name,
-                    'facpassword' => $password,
+                    'facpassword' => $this->hashPassword($password),
                     'factel' => $tele,
-                    'subject' => $spec
+                    'subject' => $subjectId
                 ]);
                 return redirect('/admin/faculty?action=add&id=none&error=4');
             }
@@ -129,6 +141,15 @@ class AdminController extends Controller
 
     public function editFaculty(Request $request)
     {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'spec' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'Tele' => 'required|regex:/^\d{11}$/',
+            'password' => 'required|string|min:8',
+            'cpassword' => 'required|same:password',
+        ]);
+
         $id = $request->input('id00');
         $name = $request->input('name');
         $oldemail = $request->input('oldemail');
@@ -137,6 +158,11 @@ class AdminController extends Controller
         $spec = $request->input('spec');
         $password = $request->input('password');
         $cpassword = $request->input('cpassword');
+        $subjectId = $this->resolveSubjectId($spec);
+
+        if (!$subjectId) {
+            return redirect("/admin/faculty?action=edit&id=$id&error=3");
+        }
 
         if ($password == $cpassword) {
             $existingUser = DB::table('webuser')->where('email', $email)->first();
@@ -147,9 +173,9 @@ class AdminController extends Controller
                     ->update([
                     'facemail' => $email,
                     'facname' => $name,
-                    'facpassword' => $password,
+                    'facpassword' => $this->hashPassword($password),
                     'factel' => $tele,
-                    'subject' => $spec
+                    'subject' => $subjectId
                 ]);
                 return redirect("/admin/faculty?action=edit&id=$id&error=4");
             }
@@ -186,10 +212,9 @@ class AdminController extends Controller
 
     public function schedule(Request $request)
     {
-        $useremail = Session::get('user');
-        $admin = Admin::where('aemail', $useremail)->first();
+        $admin = $this->authenticatedAdmin();
         if (!$admin) {
-            return redirect('/login');
+            return $this->redirectToLogin();
         }
 
         $today = date('Y-m-d');
@@ -255,10 +280,9 @@ class AdminController extends Controller
 
     public function appointment(Request $request)
     {
-        $useremail = Session::get('user');
-        $admin = Admin::where('aemail', $useremail)->first();
+        $admin = $this->authenticatedAdmin();
         if (!$admin) {
-            return redirect('/login');
+            return $this->redirectToLogin();
         }
 
         $today = date('Y-m-d');
@@ -304,10 +328,9 @@ class AdminController extends Controller
 
     public function student(Request $request)
     {
-        $useremail = Session::get('user');
-        $admin = Admin::where('aemail', $useremail)->first();
+        $admin = $this->authenticatedAdmin();
         if (!$admin) {
-            return redirect('/login');
+            return $this->redirectToLogin();
         }
 
         $today = date('Y-m-d');
@@ -339,10 +362,9 @@ class AdminController extends Controller
 
     public function settings(Request $request)
     {
-        $useremail = Session::get('user');
-        $admin = Admin::where('aemail', $useremail)->first();
+        $admin = $this->authenticatedAdmin();
         if (!$admin) {
-            return redirect('/login');
+            return $this->redirectToLogin();
         }
         $today = date('Y-m-d');
 

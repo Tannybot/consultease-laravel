@@ -13,11 +13,9 @@ class FacultyController extends Controller
 {
     public function dashboard()
     {
-        $useremail = Session::get('user');
-
-        $faculty = Faculty::where('facemail', $useremail)->first();
+        $faculty = $this->authenticatedFaculty();
         if (!$faculty) {
-            return redirect('/login');
+            return $this->redirectToLogin();
         }
 
         $today = date('Y-m-d');
@@ -38,10 +36,9 @@ class FacultyController extends Controller
 
     public function appointment(Request $request)
     {
-        $useremail = Session::get('user');
-        $faculty = Faculty::where('facemail', $useremail)->first();
+        $faculty = $this->authenticatedFaculty();
         if (!$faculty) {
-            return redirect('/login');
+            return $this->redirectToLogin();
         }
 
         $today = date('Y-m-d');
@@ -121,10 +118,9 @@ class FacultyController extends Controller
 
     public function schedule(Request $request)
     {
-        $useremail = Session::get('user');
-        $faculty = Faculty::where('facemail', $useremail)->first();
+        $faculty = $this->authenticatedFaculty();
         if (!$faculty) {
-            return redirect('/login');
+            return $this->redirectToLogin();
         }
 
         $today = date('Y-m-d');
@@ -179,30 +175,30 @@ class FacultyController extends Controller
 
     public function student()
     {
-        $useremail = Session::get('user');
-        $faculty = Faculty::where('facemail', $useremail)->first();
+        $faculty = $this->authenticatedFaculty();
         if (!$faculty) {
-            return redirect('/login');
+            return $this->redirectToLogin();
         }
 
         $today = date('Y-m-d');
+        $message = 'Student records are managed by the administration. Faculty members can continue using appointments and schedules from the dashboard.';
 
-        return view('faculty.student', compact('faculty', 'today'));
+        return view('faculty.student', compact('faculty', 'today', 'message'));
     }
 
     public function settings(Request $request)
     {
-        $useremail = Session::get('user');
-        $faculty = Faculty::where('facemail', $useremail)->first();
+        $faculty = $this->authenticatedFaculty();
         if (!$faculty) {
-            return redirect('/login');
+            return $this->redirectToLogin();
         }
+        $useremail = $faculty->facemail;
 
         $today = date('Y-m-d');
-        $action = $request->query('action', '');
-        $id = $request->query('id', '');
+        $action = $request->query('action', $request->input('action', ''));
+        $id = (string) $faculty->facid;
         $error_1 = $request->query('error', '0');
-        $nameget = $request->query('name', '');
+        $nameget = $request->query('name', $request->input('name', ''));
 
         $availabilities = [];
         $bookings = [];
@@ -240,7 +236,7 @@ class FacultyController extends Controller
                 ->get();
         }
 
-        $subjects = DB::table('subject')->get();
+        $subjects = $this->subjectOptions();
 
         $webuser = WebUser::where('email', $useremail)->first();
 
@@ -251,8 +247,13 @@ class FacultyController extends Controller
 
     public function editFaculty(Request $request)
     {
+        $faculty = $this->authenticatedFaculty();
+        if (!$faculty) {
+            return $this->redirectToLogin();
+        }
+
         if ($request->has('action') && $request->input('action') == 'update_availability') {
-            $facid = $request->input('facid');
+            $facid = $faculty->facid;
             $start_times = $request->input('start_time');
             $end_times = $request->input('end_time');
 
@@ -282,20 +283,35 @@ class FacultyController extends Controller
             return redirect()->route('faculty.settings')->with('success', 'Availability updated');
         }
         else {
-            $id = $request->input('id00');
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|email|max:255',
+                'Tele' => 'required|regex:/^\d{11}$/',
+                'spec' => 'required|string|max:255',
+                'password' => 'required|string|min:8',
+                'cpassword' => 'required|same:password',
+                'profile_pic' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            ]);
+
+            $id = $faculty->facid;
             $name = $request->input('name');
-            $oldemail = $request->input('oldemail');
+            $oldemail = $faculty->facemail;
             $email = $request->input('email');
             $tele = $request->input('Tele');
             $spec = $request->input('spec');
             $password = $request->input('password');
             $cpassword = $request->input('cpassword');
+            $subjectId = $this->resolveSubjectId($spec);
+
+            if (!$subjectId) {
+                return redirect('/faculty/settings?action=edit&id=' . $id . '&error=3');
+            }
 
             $updateData = [
                 'facname' => $name,
-                'facpassword' => $password,
+                'facpassword' => $this->hashPassword($password),
                 'factel' => $tele,
-                'subject' => $spec
+                'subject' => $subjectId
             ];
 
             if ($request->hasFile('profile_pic')) {
@@ -324,12 +340,14 @@ class FacultyController extends Controller
 
     public function deleteAccount(Request $request)
     {
-        $id = $request->input('id');
-        $faculty = Faculty::where('facid', $id)->first();
+        $faculty = $this->authenticatedFaculty();
         if ($faculty) {
             DB::table('webuser')->where('email', $faculty->facemail)->delete();
             $faculty->delete();
         }
-        return redirect('/logout');
+        Session::flush();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return $this->redirectToLogin();
     }
 }

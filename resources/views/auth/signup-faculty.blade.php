@@ -26,6 +26,12 @@
                 <form action="{{ route('signup.faculty') }}" method="POST" class="auth-form">
                     @csrf
 
+                    <datalist id="faculty-subject-options">
+                        @foreach(($subjects ?? collect()) as $subject)
+                            <option value="{{ $subject->sname }}"></option>
+                        @endforeach
+                    </datalist>
+
                     <div class="auth-grid">
                         <div class="auth-field">
                             <label for="fname" class="form-label">First name</label>
@@ -45,7 +51,7 @@
                         </div>
                         <div class="auth-field">
                             <label for="subject" class="form-label">Subject</label>
-                            <input id="subject" type="text" name="subject" class="input-text" placeholder="Enter subject" value="{{ old('subject') }}" required>
+                            <input id="subject" type="text" name="subject" class="input-text" placeholder="Enter subject" list="faculty-subject-options" value="{{ old('subject') }}" required>
                         </div>
                         <div class="auth-field">
                             <label for="newpassword" class="form-label">Create password</label>

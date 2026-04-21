@@ -17,16 +17,16 @@ Route::get('/', function () {
 // Authentication Routes
 // ──────────────────────────────────────────────
 Route::get('/login', [AuthController::class , 'showLogin'])->name('login');
-Route::post('/login', [AuthController::class , 'authenticate']);
+Route::post('/login', [AuthController::class , 'authenticate'])->middleware('throttle:5,1');
 Route::get('/signup', [AuthController::class , 'showSignup'])->name('signup');
 Route::post('/signup/role', [AuthController::class , 'processSignupRole']);
 // Role specific signup routes
 Route::get('/signup/student', [AuthController::class , 'showStudentSignup'])->name('signup.student');
-Route::post('/signup/student', [AuthController::class , 'registerStudent']);
+Route::post('/signup/student', [AuthController::class , 'registerStudent'])->middleware('throttle:5,1');
 Route::get('/signup/faculty', [AuthController::class , 'showFacultySignup'])->name('signup.faculty');
-Route::post('/signup/faculty', [AuthController::class , 'registerFaculty']);
+Route::post('/signup/faculty', [AuthController::class , 'registerFaculty'])->middleware('throttle:5,1');
 
-Route::post('/logout', [AuthController::class , 'logout'])->name('logout');
+Route::post('/logout', [AuthController::class , 'logout'])->middleware('session.auth')->name('logout');
 
 // ──────────────────────────────────────────────
 // Google OAuth 2FA Routes
@@ -34,32 +34,34 @@ Route::post('/logout', [AuthController::class , 'logout'])->name('logout');
 Route::get('/auth/google/verify', [AuthController::class , 'showGoogleVerify'])->name('google.verify');
 Route::get('/auth/google/redirect', [AuthController::class , 'redirectToGoogle'])->name('google.redirect');
 Route::get('/auth/google/callback', [AuthController::class , 'handleGoogleCallback'])->name('google.callback');
-Route::post('/settings/google-2fa/enable', [AuthController::class , 'enableGoogle2FA'])->name('google.2fa.enable');
-Route::post('/settings/google-2fa/disable', [AuthController::class , 'disableGoogle2FA'])->name('google.2fa.disable');
+Route::post('/settings/google-2fa/enable', [AuthController::class , 'enableGoogle2FA'])->middleware('session.auth')->name('google.2fa.enable');
+Route::post('/settings/google-2fa/disable', [AuthController::class , 'disableGoogle2FA'])->middleware('session.auth')->name('google.2fa.disable');
 
 // ──────────────────────────────────────────────
 // Dynamic Web Notification API Routes
 // ──────────────────────────────────────────────
-Route::get('/api/notifications', [NotificationController::class , 'fetch'])->name('notifications.fetch');
-Route::post('/api/notifications/log', [NotificationController::class , 'log'])->name('notifications.log');
-Route::post('/api/notifications/read', [NotificationController::class , 'markAsRead'])->name('notifications.read');
+Route::middleware(['session.auth', 'throttle:60,1'])->group(function () {
+    Route::get('/api/notifications', [NotificationController::class , 'fetch'])->name('notifications.fetch');
+    Route::post('/api/notifications/log', [NotificationController::class , 'log'])->name('notifications.log');
+    Route::post('/api/notifications/read', [NotificationController::class , 'markAsRead'])->name('notifications.read');
+});
 
 // ──────────────────────────────────────────────
 // Student Routes
 // ──────────────────────────────────────────────
-Route::prefix('student')->name('student.')->group(function () {
+Route::middleware(['session.auth', 'role:s'])->prefix('student')->name('student.')->group(function () {
     Route::get('/dashboard', [StudentController::class , 'dashboard'])->name('dashboard');
     Route::get('/faculty', [StudentController::class , 'faculty'])->name('faculty');
-    Route::post('/faculty', [StudentController::class , 'faculty']);
+    Route::post('/faculty', [StudentController::class , 'faculty'])->name('faculty.search');
     Route::get('/schedule', [StudentController::class , 'schedule'])->name('schedule');
-    Route::post('/schedule', [StudentController::class , 'schedule']);
+    Route::post('/schedule', [StudentController::class , 'schedule'])->name('schedule.filter');
     Route::post('/schedule/add', [StudentController::class , 'addSession'])->name('schedule.add');
     Route::post('/schedule/delete', [StudentController::class , 'deleteSession'])->name('schedule.delete');
     Route::get('/appointment', [StudentController::class , 'appointment'])->name('appointment');
-    Route::post('/appointment', [StudentController::class , 'appointment']);
+    Route::post('/appointment', [StudentController::class , 'appointment'])->name('appointment.filter');
     Route::post('/appointment/delete', [StudentController::class , 'deleteAppointment'])->name('appointment.delete');
     Route::get('/settings', [StudentController::class , 'settings'])->name('settings');
-    Route::post('/settings', [StudentController::class , 'settings']);
+    Route::post('/settings', [StudentController::class , 'settings'])->name('settings.update-view');
     Route::post('/settings/edit', [StudentController::class , 'editStudent'])->name('settings.edit');
     Route::post('/settings/delete', [StudentController::class , 'deleteAccount'])->name('settings.delete');
 });
@@ -67,18 +69,18 @@ Route::prefix('student')->name('student.')->group(function () {
 // ──────────────────────────────────────────────
 // Faculty Routes
 // ──────────────────────────────────────────────
-Route::prefix('faculty')->name('faculty.')->group(function () {
+Route::middleware(['session.auth', 'role:f'])->prefix('faculty')->name('faculty.')->group(function () {
     Route::get('/dashboard', [FacultyController::class , 'dashboard'])->name('dashboard');
     Route::get('/appointment', [FacultyController::class , 'appointment'])->name('appointment');
     Route::get('/appointment/done', [FacultyController::class , 'markDone'])->name('appointment.done');
     Route::post('/appointment/delete', [FacultyController::class , 'deleteAppointment'])->name('appointment.delete');
     Route::post('/submit-review', [FacultyController::class , 'submitReview'])->name('submit-review');
     Route::get('/schedule', [FacultyController::class , 'schedule'])->name('schedule');
-    Route::post('/schedule', [FacultyController::class , 'schedule']);
+    Route::post('/schedule', [FacultyController::class , 'schedule'])->name('schedule.filter');
     Route::post('/schedule/delete', [FacultyController::class , 'deleteSession'])->name('schedule.delete');
     Route::get('/student', [FacultyController::class , 'student'])->name('student');
     Route::get('/settings', [FacultyController::class , 'settings'])->name('settings');
-    Route::post('/settings', [FacultyController::class , 'settings']);
+    Route::post('/settings', [FacultyController::class , 'settings'])->name('settings.filter');
     Route::post('/settings/edit', [FacultyController::class , 'editFaculty'])->name('settings.edit');
     Route::post('/settings/delete', [FacultyController::class , 'deleteAccount'])->name('settings.delete');
 });
@@ -86,24 +88,24 @@ Route::prefix('faculty')->name('faculty.')->group(function () {
 // ──────────────────────────────────────────────
 // Admin Routes
 // ──────────────────────────────────────────────
-Route::prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['session.auth', 'role:a'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminController::class , 'dashboard'])->name('dashboard');
     Route::get('/faculty', [AdminController::class , 'faculty'])->name('faculty');
-    Route::post('/faculty', [AdminController::class , 'faculty']);
+    Route::post('/faculty', [AdminController::class , 'faculty'])->name('faculty.search');
     Route::post('/faculty/add', [AdminController::class , 'addFaculty'])->name('faculty.add');
     Route::post('/faculty/edit', [AdminController::class , 'editFaculty'])->name('faculty.edit');
     Route::post('/faculty/delete', [AdminController::class , 'deleteFaculty'])->name('faculty.delete');
 
     Route::get('/schedule', [AdminController::class , 'schedule'])->name('schedule');
-    Route::post('/schedule', [AdminController::class , 'schedule']);
+    Route::post('/schedule', [AdminController::class , 'schedule'])->name('schedule.filter');
     Route::post('/schedule/delete', [AdminController::class , 'deleteSession'])->name('schedule.delete');
 
     Route::get('/appointment', [AdminController::class , 'appointment'])->name('appointment');
-    Route::post('/appointment', [AdminController::class , 'appointment']);
+    Route::post('/appointment', [AdminController::class , 'appointment'])->name('appointment.filter');
     Route::post('/appointment/delete', [AdminController::class , 'deleteAppointment'])->name('appointment.delete');
 
     Route::get('/student', [AdminController::class , 'student'])->name('student');
-    Route::post('/student', [AdminController::class , 'student']);
+    Route::post('/student', [AdminController::class , 'student'])->name('student.search');
 
     Route::get('/settings', [AdminController::class , 'settings'])->name('settings');
 });

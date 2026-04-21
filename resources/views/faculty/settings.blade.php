@@ -139,61 +139,8 @@
 </head>
 <body>
     <div class="container">
-        <div class="menu">
-            <table class="menu-container" border="0">
-                <tr>
-                    <td style="padding:10px" colspan="2">
-                        <table border="0" class="profile-container">
-                            <tr>
-                                <td width="30%" style="padding-left:20px" >
-                                    <img src="{{ $faculty->profile_pic ? asset('storage/' . $faculty->profile_pic) : asset('img/user.png') }}" alt="" style="width: 91.85px; height: 91.85px; object-fit: cover; border-radius:50%">
-                                </td>
-                                <td style="padding:0px;margin:0px;">
-                                    <p class="profile-title">{{ substr($faculty->facname,0,13) }}..</p>
-                                    <p class="profile-subtitle">{{ substr($faculty->facemail,0,22) }}</p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="2">
-                                <form action="{{ route('logout') }}" method="POST">
-                                    @csrf
-                                    <button type="submit" class="logout-btn btn-primary-soft btn">Log out</button>
-                                </form>
-                                </td>
-                            </tr>
-                    </table>
-                    </td>
-                </tr>
-                <tr class="menu-row" >
-                    <td class="menu-btn menu-icon-dashbord" >
-                        <a href="{{ url('/faculty/dashboard') }}" class="non-style-link-menu "><div><p class="menu-text">Dashboard</p></div></a>
-                    </td>
-                </tr>
-                <tr class="menu-row">
-                    <td class="menu-btn menu-icon-appoinment">
-                        <a href="{{ url('/faculty/appointment') }}" class="non-style-link-menu"><div><p class="menu-text">My Appointments</p></div></a>
-                    </td>
-                </tr>
-                
-                <tr class="menu-row" >
-                    <td class="menu-btn menu-icon-session">
-                        <a href="{{ url('/faculty/schedule') }}" class="non-style-link-menu"><div><p class="menu-text">My Sessions</p></div></a>
-                    </td>
-                </tr>
-                <tr class="menu-row" >
-                    <td class="menu-btn menu-icon-student">
-                        <a href="{{ url('/faculty/student') }}" class="non-style-link-menu"><div><p class="menu-text">My Students</p></div></a>
-                    </td>
-                </tr>
-                <tr class="menu-row" >
-                    <td class="menu-btn menu-icon-settings  menu-active menu-icon-settings-active">
-                        <a href="{{ url('/faculty/settings') }}" class="non-style-link-menu non-style-link-menu-active"><div><p class="menu-text">Settings</p></div></a>
-                    </td>
-                </tr>
-                
-            </table>
-        </div>
-        <div class="dash-body" style="margin-top: 15px">
+                @include('shared.sidebar-faculty', ['activePage' => 'settings'])
+<div class="dash-body" style="margin-top: 15px">
             <table border="0" width="100%" style=" border-spacing: 0;margin:0;padding:0;" >
                         
                         <tr >
@@ -432,80 +379,66 @@
         </div>
     @elseif($action=='view')
         <div id="popup1" class="overlay">
-                <div class="popup">
-                <center>
-                    <h2></h2>
+                <div class="popup popup--profile-id">
                     <a class="close" href="{{ url('/faculty/settings') }}">&times;</a>
-                    <div class="content">
-                        ConsultEase<br>
-                        
-                    </div>
-                    <div style="display: flex;justify-content: center;">
-                    <table width="80%" class="sub-table scrolldown add-doc-form-container" border="0">
-                    
-                        <tr>
-                            <td>
-                                <p style="padding: 0;margin: 0;text-align: left;font-size: 25px;font-weight: 500;">View Details</p><br><br>
-                            </td>
-                        </tr>
-                        
-                        <tr>
-                            
-                            <td class="label-td" colspan="2">
-                                <label for="name" class="form-label">Name: </label>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="label-td" colspan="2">
-                                {{ $faculty->facname }}<br><br>
-                            </td>
-                            
-                        </tr>
-                        <tr>
-                            <td class="label-td" colspan="2">
-                                <label for="Email" class="form-label">Email: </label>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="label-td" colspan="2">
-                            {{ $faculty->facemail }}<br><br>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="label-td" colspan="2">
-                                <label for="Tele" class="form-label">Telephone: </label>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="label-td" colspan="2">
-                            {{ $faculty->factel }}<br><br>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="label-td" colspan="2">
-                                <label for="spec" class="form-label">Subject: </label>
-                                
-                            </td>
-                        </tr>
-                        <tr>
-                        <td class="label-td" colspan="2">
-                        {{ $faculty->subject }}<br><br>
-                        </td>
-                        </tr>
-                        <tr>
-                            <td colspan="2">
-                                <a href="{{ url('/faculty/settings') }}"><input type="button" value="OK" class="login-btn btn-primary-soft btn" ></a>
-                            
-                                
-                            </td>
-            
-                        </tr>
-                        
+                    <div class="profile-id-card">
+                        <div class="profile-id-card__top">
+                            <div>
+                                <span class="profile-id-card__eyebrow">Faculty Profile</span>
+                                <h2 class="profile-id-card__title">Faculty Information Card</h2>
+                                <p class="profile-id-card__subtitle">A cleaner ID-style summary of your faculty account and teaching details.</p>
+                            </div>
+                            <div class="profile-id-card__badge">F-{{ $id }}</div>
+                        </div>
 
-                    </table>
+                        <div class="profile-id-card__hero">
+                            <div class="profile-id-card__avatar-wrap">
+                                <img
+                                    src="{{ $faculty->profile_pic ? asset('storage/' . $faculty->profile_pic) : asset('img/user.png') }}"
+                                    alt="{{ $faculty->facname }}"
+                                    class="profile-id-card__avatar"
+                                >
+                            </div>
+                            <div class="profile-id-card__hero-copy">
+                                <p class="profile-id-card__role">Faculty Member</p>
+                                <h3 class="profile-id-card__name">{{ $faculty->facname }}</h3>
+                                <p class="profile-id-card__meta">{{ $faculty->facemail }}</p>
+                                <div class="profile-id-card__chips">
+                                    <span class="status-chip status-chip--success">Active Account</span>
+                                    <span class="profile-id-card__micro">Faculty ID {{ $id }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="profile-id-card__grid">
+                            <div class="profile-id-card__field">
+                                <span class="profile-id-card__label">Faculty ID</span>
+                                <div class="profile-id-card__value">F-{{ $id }}</div>
+                            </div>
+                            <div class="profile-id-card__field">
+                                <span class="profile-id-card__label">Subject</span>
+                                <div class="profile-id-card__value">{{ optional($subjects->firstWhere('id', (int) $faculty->subject))->sname ?? $faculty->subject }}</div>
+                            </div>
+                            <div class="profile-id-card__field">
+                                <span class="profile-id-card__label">Telephone</span>
+                                <div class="profile-id-card__value">{{ $faculty->factel }}</div>
+                            </div>
+                            <div class="profile-id-card__field">
+                                <span class="profile-id-card__label">Email</span>
+                                <div class="profile-id-card__value">{{ $faculty->facemail }}</div>
+                            </div>
+                            <div class="profile-id-card__field profile-id-card__field--wide">
+                                <span class="profile-id-card__label">Role</span>
+                                <div class="profile-id-card__value">Faculty Member</div>
+                            </div>
+                        </div>
+
+                        <div class="dialog-actions" style="padding: 0 24px 24px;">
+                            <a href="{{ url('/faculty/settings') }}" class="non-style-link">
+                                <button class="btn-primary-soft btn">Close Card</button>
+                            </a>
+                        </div>
                     </div>
-                </center>
-                <br><br>
         </div>
         </div>
     @elseif($action=='availability')
@@ -620,7 +553,7 @@
             $errorlist = [
                 '1' => '<label for="promter" class="form-label" style="color:rgb(255, 62, 62);text-align:center;">Already have an account for this Email address.</label>',
                 '2' => '<label for="promter" class="form-label" style="color:rgb(255, 62, 62);text-align:center;">Password Confirmation Error! Reconfirm Password</label>',
-                '3' => '<label for="promter" class="form-label" style="color:rgb(255, 62, 62);text-align:center;"></label>',
+                '3' => '<label for="promter" class="form-label" style="color:rgb(255, 62, 62);text-align:center;">Please provide a valid subject.</label>',
                 '4' => '',
                 '0' => '',
             ];
@@ -693,13 +626,18 @@
                         </tr>
                         <tr>
                             <td class="label-td" colspan="2">
-                                <label for="spec" class="form-label">Subject: (Current: {{ $faculty->subject }})</label>
+                                <label for="spec" class="form-label">Subject: (Current: {{ optional($subjects->firstWhere('id', (int) $faculty->subject))->sname ?? $faculty->subject }})</label>
                                 
                             </td>
                         </tr>
                         <tr>
                             <td class="label-td" colspan="2">
-                                <input type="text" name="spec" class="input-text" placeholder="Enter Subject" value="{{ $faculty->subject }}" required><br><br>
+                                <input type="text" name="spec" class="input-text" placeholder="Enter Subject" list="faculty-subject-options" value="{{ optional($subjects->firstWhere('id', (int) $faculty->subject))->sname ?? $faculty->subject }}" required><br><br>
+                                <datalist id="faculty-subject-options">
+                                    @foreach($subjects as $sub)
+                                        <option value="{{ $sub->sname }}"></option>
+                                    @endforeach
+                                </datalist>
                             </td>
                         </tr>
                         <tr>
@@ -865,3 +803,4 @@ function downloadCSV() {
     @include('shared.notifications')
 </body>
 </html>
+

@@ -20,65 +20,8 @@
 </head>
 <body>
     <div class="container">
-        <div class="menu" id="menu">
-            <table class="menu-container" border="0">
-                <tr>
-                    <td style="padding:10px" colspan="2">
-                        <table border="0" class="profile-container">
-                            <tr>
-                                <td width="30%" style="padding-left:20px" >
-                                    <img src="{{ asset('img/user.png') }}" alt="" style="width: 91.85px; height: 91.85px; border-radius:50%">
-                                </td>
-                                <td style="padding:0px;margin:0px; position: relative;">
-                                    <p class="profile-title">Administrator</p>
-                                    <p class="profile-subtitle">{{ $admin->aemail }}</p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="2">
-                                <form action="{{ route('logout') }}" method="POST">
-                                    @csrf
-                                    <button type="submit" class="logout-btn btn-primary-soft btn">Log out</button>
-                                </form>
-                                </td>
-                            </tr>
-                    </table>
-                    </td>
-                </tr>
-                <tr class="menu-row" >
-                    <td class="menu-btn menu-icon-dashbord" >
-                        <a href="{{ url('/admin/dashboard') }}" class="non-style-link-menu"><div><p class="menu-text">Dashboard</p></div></a>
-                    </td>
-                </tr>
-                <tr class="menu-row">
-                    <td class="menu-btn menu-icon-faculty ">
-                        <a href="{{ url('/admin/faculty') }}" class="non-style-link-menu "><div><p class="menu-text">Faculty</p></div></a>
-                    </td>
-                </tr>
-                <tr class="menu-row" >
-                    <td class="menu-btn menu-icon-schedule ">
-                        <a href="{{ url('/admin/schedule') }}" class="non-style-link-menu"><div><p class="menu-text">Schedule</p></div></a>
-                    </td>
-                </tr>
-                <tr class="menu-row">
-                    <td class="menu-btn menu-icon-appoinment menu-active menu-icon-appoinment-active">
-                        <a href="{{ url('/admin/appointment') }}" class="non-style-link-menu non-style-link-menu-active"><div><p class="menu-text">Appointment</p></div></a>
-                    </td>
-                </tr>
-                <tr class="menu-row" >
-                    <td class="menu-btn menu-icon-student">
-                        <a href="{{ url('/admin/student') }}" class="non-style-link-menu"><div><p class="menu-text">Student</p></div></a>
-                    </td>
-                </tr>
-                <tr class="menu-row" >
-                    <td class="menu-btn menu-icon-settings">
-                        <a href="{{ url('/admin/settings') }}" class="non-style-link-menu"><div><p class="menu-text">Profile</p></div></a>
-                    </td>
-                </tr>
-
-            </table>
-        </div>
-        <div class="dash-body" id="dash-body" style="margin-top: 15px">
+                @include('shared.sidebar-admin', ['activePage' => 'appointment'])
+<div class="dash-body" id="dash-body" style="margin-top: 15px">
             {{-- ── Top header bar ── --}}
             <div class="admin-header-bar" style="justify-content: space-between;">
                 <div class="back-cell" style="display: flex; align-items: center; gap: 15px;">
@@ -221,5 +164,8 @@
         </div>
     @endif
     </div>
+
+    @include('shared.notifications')
 </body>
 </html>
+

@@ -20,65 +20,8 @@
 </head>
 <body>
 <div class="container">
-    <div class="menu">
-        <table class="menu-container" border="0">
-            <tr>
-                <td style="padding:10px" colspan="2">
-                    <table border="0" class="profile-container">
-                        <tr>
-                            <td width="30%" style="padding-left:20px">
-                                <img src="{{ $student->profile_pic ? asset('storage/' . $student->profile_pic) : asset('img/user.png') }}" alt="User icon" style="width: 91.85px; height: 91.85px; object-fit: cover; border-radius:50%">
-                            </td>
-                            <td style="padding:0;margin:0;">
-                                <p class="profile-title">{{ substr($student->sname,0,13) }}..</p>
-                                <p class="profile-subtitle">{{ substr($student->semail,0,22) }}</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="2">
-                                <form action="{{ route('logout') }}" method="POST">
-                                    @csrf
-                                    <button type="submit" class="logout-btn btn-primary-soft btn">Log out</button>
-                                </form>
-                            </td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
-            <tr class="menu-row">
-                <td class="menu-btn menu-icon-home">
-                    <a href="{{ url('/student/dashboard') }}" class="non-style-link-menu"><div><p class="menu-text">Home</p></div></a>
-                </td>
-            </tr>
-            <tr class="menu-row">
-                <td class="menu-btn menu-icon-faculty">
-                    <a href="{{ url('/student/faculty') }}" class="non-style-link-menu"><div><p class="menu-text">All Faculty</p></div></a>
-                </td>
-            </tr>
-            <tr class="menu-row">
-                <td class="menu-btn menu-icon-session">
-                    <a href="{{ url('/student/schedule') }}" class="non-style-link-menu"><div><p class="menu-text">Scheduled Sessions</p></div></a>
-                </td>
-            </tr>
-            <tr class="menu-row">
-                <td class="menu-btn menu-icon-appoinment">
-                    <a href="{{ url('/student/appointment') }}" class="non-style-link-menu"><div><p class="menu-text">My Bookings</p></div></a>
-                </td>
-            </tr>
-            <tr class="menu-row">
-                <td class="menu-btn menu-icon-settings menu-active menu-icon-settings-active">
-                    <a href="{{ url('/student/settings') }}" class="non-style-link-menu non-style-link-menu-active"><div><p class="menu-text">Settings</p></div></a>
-                </td>
-            </tr>
-            <tr class="menu-row">
-                <td class="menu-btn menu-icon-notifications" id="notification-btn">
-                    <div><p class="menu-text">Notifications</p></div>
-                </td>
-            </tr>
-        </table>
-    </div>
-
-    <div class="dash-body">
+            @include('shared.sidebar-student', ['activePage' => 'settings'])
+<div class="dash-body">
         <div class="page-shell">
             <div class="page-toolbar">
                 <div class="page-toolbar__group">
@@ -210,45 +153,66 @@
     </div>
 @elseif($action=='view' && $viewStudent)
     <div id="popup1" class="overlay">
-        <div class="popup">
-            <center>
+        <div class="popup popup--profile-id">
                 <a class="close" href="{{ url('/student/settings') }}">&times;</a>
-                <div class="app-form-card" style="text-align:left;">
-                    <div class="page-card__header">
+                <div class="profile-id-card">
+                    <div class="profile-id-card__top">
                         <div>
-                            <span class="page-card__eyebrow">Profile</span>
-                            <h2 class="page-card__title">View account details</h2>
+                            <span class="profile-id-card__eyebrow">Student Profile</span>
+                            <h2 class="profile-id-card__title">Student Information Card</h2>
+                            <p class="profile-id-card__subtitle">A cleaner ID-style summary of the account you use in the system.</p>
+                        </div>
+                        <div class="profile-id-card__badge">S-{{ $id }}</div>
+                    </div>
+
+                    <div class="profile-id-card__hero">
+                        <div class="profile-id-card__avatar-wrap">
+                            <img
+                                src="{{ $viewStudent->profile_pic ? asset('storage/' . $viewStudent->profile_pic) : asset('img/user.png') }}"
+                                alt="{{ $viewStudent->sname }}"
+                                class="profile-id-card__avatar"
+                            >
+                        </div>
+                        <div class="profile-id-card__hero-copy">
+                            <p class="profile-id-card__role">Registered Student</p>
+                            <h3 class="profile-id-card__name">{{ $viewStudent->sname }}</h3>
+                            <p class="profile-id-card__meta">{{ $viewStudent->semail }}</p>
+                            <div class="profile-id-card__chips">
+                                <span class="status-chip status-chip--success">Active Account</span>
+                                <span class="profile-id-card__micro">Student ID {{ $id }}</span>
+                            </div>
                         </div>
                     </div>
-                    <div class="detail-list">
-                        <div class="detail-list__item">
-                            <span class="detail-list__label">Name</span>
-                            <div class="detail-list__value">{{ $viewStudent->sname }}</div>
+
+                    <div class="profile-id-card__grid">
+                        <div class="profile-id-card__field">
+                            <span class="profile-id-card__label">Student ID</span>
+                            <div class="profile-id-card__value">S-{{ $id }}</div>
                         </div>
-                        <div class="detail-list__item">
-                            <span class="detail-list__label">Email</span>
-                            <div class="detail-list__value">{{ $viewStudent->semail }}</div>
+                        <div class="profile-id-card__field">
+                            <span class="profile-id-card__label">Date of Birth</span>
+                            <div class="profile-id-card__value">{{ $viewStudent->sdob }}</div>
                         </div>
-                        <div class="detail-list__item">
-                            <span class="detail-list__label">Telephone</span>
-                            <div class="detail-list__value">{{ $viewStudent->stel }}</div>
+                        <div class="profile-id-card__field">
+                            <span class="profile-id-card__label">Telephone</span>
+                            <div class="profile-id-card__value">{{ $viewStudent->stel }}</div>
                         </div>
-                        <div class="detail-list__item">
-                            <span class="detail-list__label">Address</span>
-                            <div class="detail-list__value">{{ $viewStudent->saddress }}</div>
+                        <div class="profile-id-card__field">
+                            <span class="profile-id-card__label">Email</span>
+                            <div class="profile-id-card__value">{{ $viewStudent->semail }}</div>
                         </div>
-                        <div class="detail-list__item">
-                            <span class="detail-list__label">Date of Birth</span>
-                            <div class="detail-list__value">{{ $viewStudent->sdob }}</div>
+                        <div class="profile-id-card__field profile-id-card__field--wide">
+                            <span class="profile-id-card__label">Address</span>
+                            <div class="profile-id-card__value">{{ $viewStudent->saddress }}</div>
                         </div>
                     </div>
-                    <div class="dialog-actions">
+
+                    <div class="dialog-actions" style="padding: 0 24px 24px;">
                         <a href="{{ url('/student/settings') }}" class="non-style-link">
-                            <button class="btn-primary-soft btn">Close</button>
+                            <button class="btn-primary-soft btn">Close Card</button>
                         </a>
                     </div>
                 </div>
-            </center>
         </div>
     </div>
 @elseif($action=='edit' && $viewStudent)
@@ -340,3 +304,4 @@
 @include('shared.notifications')
 </body>
 </html>
+

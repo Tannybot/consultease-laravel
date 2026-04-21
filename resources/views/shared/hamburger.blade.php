@@ -16,28 +16,48 @@
 <div class="menu-overlay" id="menuOverlay" onclick="toggleMenu(false)"></div>
 
 <script>
-    function toggleMenu(forceState) {
-        const menu = document.querySelector('.menu');
-        const overlay = document.getElementById('menuOverlay');
-        const toggleButton = document.getElementById('menuToggleButton');
+    (function () {
+        const mobileQuery = window.matchMedia('(max-width: 768px)');
 
-        if (!menu || !overlay || !toggleButton) {
-            return;
+        window.toggleMenu = function (forceState) {
+            const menu = document.querySelector('.menu');
+            const overlay = document.getElementById('menuOverlay');
+            const toggleButton = document.getElementById('menuToggleButton');
+
+            if (!menu || !overlay || !toggleButton) {
+                return;
+            }
+
+            const nextState = typeof forceState === 'boolean'
+                ? forceState
+                : !menu.classList.contains('open');
+
+            if (nextState && typeof window.setNotificationPanelState === 'function') {
+                window.setNotificationPanelState(false);
+            }
+
+            menu.classList.toggle('open', nextState);
+            overlay.classList.toggle('open', nextState);
+            document.body.classList.toggle('menu-open', nextState);
+            toggleButton.setAttribute('aria-expanded', nextState ? 'true' : 'false');
+        };
+
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape') {
+                window.toggleMenu(false);
+            }
+        });
+
+        function syncMenuToViewport(event) {
+            if (!event.matches) {
+                window.toggleMenu(false);
+            }
         }
 
-        const nextState = typeof forceState === 'boolean'
-            ? forceState
-            : !menu.classList.contains('open');
-
-        menu.classList.toggle('open', nextState);
-        overlay.classList.toggle('open', nextState);
-        document.body.classList.toggle('menu-open', nextState);
-        toggleButton.setAttribute('aria-expanded', nextState ? 'true' : 'false');
-    }
-
-    document.addEventListener('keydown', function (event) {
-        if (event.key === 'Escape') {
-            toggleMenu(false);
+        if (typeof mobileQuery.addEventListener === 'function') {
+            mobileQuery.addEventListener('change', syncMenuToViewport);
+        } else if (typeof mobileQuery.addListener === 'function') {
+            mobileQuery.addListener(syncMenuToViewport);
         }
-    });
+    })();
 </script>

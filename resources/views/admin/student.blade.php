@@ -21,65 +21,8 @@
 </head>
 <body>
     <div class="container">
-        <div class="menu">
-            <table class="menu-container" border="0">
-                <tr>
-                    <td style="padding:10px" colspan="2">
-                        <table border="0" class="profile-container">
-                            <tr>
-                                <td width="30%" style="padding-left:20px" >
-                                    <img src="{{ asset('img/user.png') }}" alt="" style="width: 91.85px; height: 91.85px; border-radius:50%">
-                                </td>
-                                <td style="padding:0px;margin:0px;">
-                                    <p class="profile-title">Administrator</p>
-                                    <p class="profile-subtitle">{{ $admin->aemail }}</p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="2">
-                                <form action="{{ route('logout') }}" method="POST">
-                                    @csrf
-                                    <button type="submit" class="logout-btn btn-primary-soft btn">Log out</button>
-                                </form>
-                                </td>
-                            </tr>
-                    </table>
-                    </td>
-                </tr>
-                <tr class="menu-row" >
-                    <td class="menu-btn menu-icon-dashbord" >
-                        <a href="{{ url('/admin/dashboard') }}" class="non-style-link-menu"><div><p class="menu-text">Dashboard</p></div></a>
-                    </td>
-                </tr>
-                <tr class="menu-row">
-                    <td class="menu-btn menu-icon-faculty ">
-                        <a href="{{ url('/admin/faculty') }}" class="non-style-link-menu "><div><p class="menu-text">Faculty</p></div></a>
-                    </td>
-                </tr>
-                <tr class="menu-row" >
-                    <td class="menu-btn menu-icon-schedule">
-                        <a href="{{ url('/admin/schedule') }}" class="non-style-link-menu"><div><p class="menu-text">Schedule</p></div></a>
-                    </td>
-                </tr>
-                <tr class="menu-row">
-                    <td class="menu-btn menu-icon-appoinment">
-                        <a href="{{ url('/admin/appointment') }}" class="non-style-link-menu"><div><p class="menu-text">Appointment</p></div></a>
-                    </td>
-                </tr>
-                <tr class="menu-row" >
-                    <td class="menu-btn menu-icon-student  menu-active menu-icon-student-active">
-                        <a href="{{ url('/admin/student') }}" class="non-style-link-menu  non-style-link-menu-active"><div><p class="menu-text">Students</p></div></a>
-                    </td>
-                </tr>
-                <tr class="menu-row" >
-                    <td class="menu-btn menu-icon-settings">
-                        <a href="{{ url('/admin/settings') }}" class="non-style-link-menu"><div><p class="menu-text">Profile</p></div></a>
-                    </td>
-                </tr>
-
-            </table>
-        </div>
-        <div class="dash-body">
+                @include('shared.sidebar-admin', ['activePage' => 'student'])
+<div class="dash-body">
             <table border="0" width="100%" style=" border-spacing: 0;margin:0;padding:0;margin-top:25px; ">
                 <tr >
                     <td width="13%">
@@ -88,22 +31,24 @@
                         
                     </td>
                     <td>
-                        
-                        <form action="{{ url('/admin/student') }}" method="post" class="header-search">
-                            @csrf
-                            <input type="search" name="search" class="input-text header-searchbar" placeholder="Search Student name or Email" list="student">&nbsp;&nbsp;
+                        <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+                            @include('shared.hamburger')
+                            <form action="{{ url('/admin/student') }}" method="post" class="header-search" style="flex:1 1 320px;">
+                                @csrf
+                                <input type="search" name="search" class="input-text header-searchbar" placeholder="Search Student name or Email" list="student">&nbsp;&nbsp;
+                                
+                                <datalist id="student">
+                                @foreach($studentDataList as $s)
+                                    <option value="{{ $s->sname }}"><br/>
+                                    <option value="{{ $s->semail }}"><br/>
+                                @endforeach
+                                </datalist>
+                                
+                           
+                                <input type="Submit" value="Search" class="login-btn btn-primary btn" style="padding-left: 25px;padding-right: 25px;padding-top: 10px;padding-bottom: 10px;">
                             
-                            <datalist id="student">
-                            @foreach($studentDataList as $s)
-                                <option value="{{ $s->sname }}"><br/>
-                                <option value="{{ $s->semail }}"><br/>
-                            @endforeach
-                            </datalist>
-                            
-                       
-                            <input type="Submit" value="Search" class="login-btn btn-primary btn" style="padding-left: 25px;padding-right: 25px;padding-top: 10px;padding-bottom: 10px;">
-                        
-                        </form>
+                            </form>
+                        </div>
                         
                     </td>
                     <td width="15%">
@@ -187,102 +132,72 @@
     
     @if($action=='view' && $studentDetails)
         <div id="popup1" class="overlay">
-                <div class="popup">
-                <center>
+                <div class="popup popup--profile-id">
                     <a class="close" href="{{ url('/admin/student') }}">&times;</a>
-                    <div class="content">
+                    <div class="profile-id-card">
+                        <div class="profile-id-card__top">
+                            <div>
+                                <span class="profile-id-card__eyebrow">Student Profile</span>
+                                <h2 class="profile-id-card__title">Student Information Card</h2>
+                                <p class="profile-id-card__subtitle">A clearer ID-style view for quick record checking.</p>
+                            </div>
+                            <div class="profile-id-card__badge">P-{{ $id }}</div>
+                        </div>
 
+                        <div class="profile-id-card__hero">
+                            <div class="profile-id-card__avatar-wrap">
+                                <img
+                                    src="{{ $studentDetails->profile_pic ? asset('storage/' . $studentDetails->profile_pic) : asset('img/user.png') }}"
+                                    alt="{{ $studentDetails->sname }}"
+                                    class="profile-id-card__avatar"
+                                >
+                            </div>
+                            <div class="profile-id-card__hero-copy">
+                                <p class="profile-id-card__role">Registered Student</p>
+                                <h3 class="profile-id-card__name">{{ $studentDetails->sname }}</h3>
+                                <p class="profile-id-card__meta">{{ $studentDetails->semail }}</p>
+                                <div class="profile-id-card__chips">
+                                    <span class="status-chip status-chip--success">Active Record</span>
+                                    <span class="profile-id-card__micro">ID {{ $id }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="profile-id-card__grid">
+                            <div class="profile-id-card__field">
+                                <span class="profile-id-card__label">Student ID</span>
+                                <div class="profile-id-card__value">P-{{ $id }}</div>
+                            </div>
+                            <div class="profile-id-card__field">
+                                <span class="profile-id-card__label">Date of Birth</span>
+                                <div class="profile-id-card__value">{{ $studentDetails->sdob }}</div>
+                            </div>
+                            <div class="profile-id-card__field">
+                                <span class="profile-id-card__label">Telephone</span>
+                                <div class="profile-id-card__value">{{ $studentDetails->stel }}</div>
+                            </div>
+                            <div class="profile-id-card__field">
+                                <span class="profile-id-card__label">Email</span>
+                                <div class="profile-id-card__value">{{ $studentDetails->semail }}</div>
+                            </div>
+                            <div class="profile-id-card__field profile-id-card__field--wide">
+                                <span class="profile-id-card__label">Address</span>
+                                <div class="profile-id-card__value">{{ $studentDetails->saddress }}</div>
+                            </div>
+                        </div>
+
+                        <div class="dialog-actions" style="padding: 0 24px 24px;">
+                            <a href="{{ url('/admin/student') }}" class="non-style-link">
+                                <button class="btn-primary-soft btn">Close Card</button>
+                            </a>
+                        </div>
                     </div>
-                    <div style="display: flex;justify-content: center;">
-                    <table width="80%" class="sub-table scrolldown add-doc-form-container" border="0">
-                    
-                        <tr>
-                            <td>
-                                <p style="padding: 0;margin: 0;text-align: left;font-size: 25px;font-weight: 500;">View Details.</p><br><br>
-                            </td>
-                        </tr>
-                        <tr>
-                            
-                            <td class="label-td" colspan="2">
-                                <label for="name" class="form-label">Student ID: </label>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="label-td" colspan="2">
-                                P-{{ $id }}<br><br>
-                            </td>
-                            
-                        </tr>
-                        
-                        <tr>
-                            
-                            <td class="label-td" colspan="2">
-                                <label for="name" class="form-label">Name: </label>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="label-td" colspan="2">
-                                {{ $studentDetails->sname }}<br><br>
-                            </td>
-                            
-                        </tr>
-                        <tr>
-                            <td class="label-td" colspan="2">
-                                <label for="Email" class="form-label">Email: </label>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="label-td" colspan="2">
-                            {{ $studentDetails->semail }}<br><br>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="label-td" colspan="2">
-                                <label for="Tele" class="form-label">Telephone: </label>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="label-td" colspan="2">
-                            {{ $studentDetails->stel }}<br><br>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="label-td" colspan="2">
-                                <label for="spec" class="form-label">Address: </label>
-                                
-                            </td>
-                        </tr>
-                        <tr>
-                        <td class="label-td" colspan="2">
-                        {{ $studentDetails->saddress }}<br><br>
-                        </td>
-                        </tr>
-                        <tr>
-                            
-                            <td class="label-td" colspan="2">
-                                <label for="name" class="form-label">Date of Birth: </label>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="label-td" colspan="2">
-                                {{ $studentDetails->sdob }}<br><br>
-                            </td>
-                            
-                        </tr>
-                        <tr>
-                            <td colspan="2">
-                                <a href="{{ url('/admin/student') }}"><input type="button" value="OK" class="login-btn btn-primary-soft btn" ></a>
-                            </td>
-            
-                        </tr>
-                    </table>
-                    </div>
-                </center>
-                <br><br>
         </div>
         </div>
     @endif
 </div>
 
+@include('shared.notifications')
 </body>
 </html>
+

@@ -22,8 +22,8 @@ class AuthController extends Controller
     public function authenticate(Request $request)
     {
         $request->validate([
-            'useremail' => 'required|email',
-            'userpassword' => 'required'
+            'useremail' => 'required|email|max:255',
+            'userpassword' => 'required|string'
         ]);
 
         $email = $request->input('useremail');
@@ -36,16 +36,34 @@ class AuthController extends Controller
             $authenticated = false;
 
             if ($utype == 's') {
-                $student = Student::where('semail', $email)->where('spassword', $password)->first();
-                if ($student) $authenticated = true;
+                $student = Student::where('semail', $email)->first();
+                if ($student && $this->verifyPassword($password, $student->spassword)) {
+                    if (!$this->passwordIsHashed($student->spassword)) {
+                        $student->spassword = $this->hashPassword($password);
+                        $student->save();
+                    }
+                    $authenticated = true;
+                }
             }
             elseif ($utype == 'a') {
-                $admin = Admin::where('aemail', $email)->where('apassword', $password)->first();
-                if ($admin) $authenticated = true;
+                $admin = Admin::where('aemail', $email)->first();
+                if ($admin && $this->verifyPassword($password, $admin->apassword)) {
+                    if (!$this->passwordIsHashed($admin->apassword)) {
+                        $admin->apassword = $this->hashPassword($password);
+                        $admin->save();
+                    }
+                    $authenticated = true;
+                }
             }
             elseif ($utype == 'f') {
-                $faculty = Faculty::where('facemail', $email)->where('facpassword', $password)->first();
-                if ($faculty) $authenticated = true;
+                $faculty = Faculty::where('facemail', $email)->first();
+                if ($faculty && $this->verifyPassword($password, $faculty->facpassword)) {
+                    if (!$this->passwordIsHashed($faculty->facpassword)) {
+                        $faculty->facpassword = $this->hashPassword($password);
+                        $faculty->save();
+                    }
+                    $authenticated = true;
+                }
             }
 
             if ($authenticated) {
@@ -58,6 +76,7 @@ class AuthController extends Controller
                 }
 
                 // Normal login — no 2FA
+                $request->session()->regenerate();
                 Session::put('user', $email);
                 Session::put('usertype', $utype);
                 return $this->redirectToDashboard($utype);
@@ -75,7 +94,7 @@ class AuthController extends Controller
     public function showGoogleVerify()
     {
         if (!Session::has('2fa_pending_email')) {
-            return redirect('/login')->with('error', 'Please login first.');
+            return $this->redirectToLogin()->with('error', 'Please login first.');
         }
         return view('auth.google-verify');
     }
@@ -102,7 +121,7 @@ class AuthController extends Controller
         try {
             $googleUser = Socialite::driver('google')->user();
         } catch (\Exception $e) {
-            return redirect('/login')->with('error', 'Google authentication failed. Please try again.');
+            return $this->redirectToLogin()->with('error', 'Google authentication failed. Please try again.');
         }
 
         $purpose = Session::get('google_oauth_purpose', '2fa');
@@ -123,7 +142,7 @@ class AuthController extends Controller
         $usertype = Session::get('2fa_pending_usertype');
 
         if (!$email || !$usertype) {
-            return redirect('/login')->with('error', 'Session expired. Please login again.');
+            return $this->redirectToLogin()->with('error', 'Session expired. Please login again.');
         }
 
         $webuser = WebUser::where('email', $email)->first();
@@ -131,7 +150,7 @@ class AuthController extends Controller
         if (!$webuser || $webuser->google_id !== $googleUser->getId()) {
             // Clear pending session
             Session::forget(['2fa_pending_email', '2fa_pending_usertype', 'google_oauth_purpose']);
-            return redirect('/login')->with('error', 'Google account mismatch. Please use the Google account linked to your ConsultEase account.');
+            return $this->redirectToLogin()->with('error', 'Google account mismatch. Please use the Google account linked to your ConsultEase account.');
         }
 
         // 2FA verified — complete login
@@ -149,14 +168,14 @@ class AuthController extends Controller
     {
         Session::forget('google_oauth_purpose');
 
-        $email = Session::get('user');
+        $email = $this->sessionUserEmail();
         if (!$email) {
-            return redirect('/login')->with('error', 'Please login first.');
+            return $this->redirectToLogin()->with('error', 'Please login first.');
         }
 
         $webuser = WebUser::where('email', $email)->first();
         if (!$webuser) {
-            return redirect('/login')->with('error', 'User not found.');
+            return $this->redirectToLogin()->with('error', 'User not found.');
         }
 
         // Check if this Google ID is already linked to another account
@@ -184,7 +203,7 @@ class AuthController extends Controller
     public function enableGoogle2FA()
     {
         if (!Session::has('user')) {
-            return redirect('/login');
+            return $this->redirectToLogin();
         }
 
         Session::put('google_oauth_purpose', 'link');
@@ -199,9 +218,9 @@ class AuthController extends Controller
      */
     public function disableGoogle2FA(Request $request)
     {
-        $email = Session::get('user');
+        $email = $this->sessionUserEmail();
         if (!$email) {
-            return redirect('/login');
+            return $this->redirectToLogin();
         }
 
         $webuser = WebUser::where('email', $email)->first();
@@ -211,7 +230,7 @@ class AuthController extends Controller
             $webuser->save();
         }
 
-        $usertype = Session::get('usertype');
+        $usertype = $this->sessionUserType();
         $redirectUrl = $this->getSettingsUrl($usertype);
         return redirect($redirectUrl)->with('success', 'Google 2FA has been disabled.');
     }
@@ -225,7 +244,7 @@ class AuthController extends Controller
             case 's': return redirect('/student/dashboard');
             case 'a': return redirect('/admin/dashboard');
             case 'f': return redirect('/faculty/dashboard');
-            default:  return redirect('/login');
+            default:  return $this->redirectToLogin();
         }
     }
 
@@ -253,6 +272,10 @@ class AuthController extends Controller
 
     public function processSignupRole(Request $request)
     {
+        $request->validate([
+            'role' => 'required|in:student,faculty',
+        ]);
+
         $role = $request->input('role');
         if ($role == 'student') {
             return redirect()->route('signup.student');
@@ -271,23 +294,23 @@ class AuthController extends Controller
     public function registerStudent(Request $request)
     {
         $request->validate([
-            'fname' => 'required',
-            'lname' => 'required',
-            'address' => 'required',
+            'fname' => 'required|string|max:100',
+            'lname' => 'required|string|max:100',
+            'address' => 'required|string|max:255',
             'dob' => 'required|date',
-            'newemail' => 'required|email|unique:webuser,email',
+            'newemail' => 'required|email|max:255|unique:webuser,email',
             'tele' => 'required|regex:/^\d{11}$/',
-            'newpassword' => 'required',
+            'newpassword' => 'required|string|min:8',
             'cpassword' => 'required|same:newpassword'
         ]);
 
-        $name = $request->input('fname') . " " . $request->input('lname');
+        $name = trim($request->input('fname') . ' ' . $request->input('lname'));
         $email = $request->input('newemail');
 
         Student::insert([
             'semail' => $email,
             'sname' => $name,
-            'spassword' => $request->input('newpassword'),
+            'spassword' => $this->hashPassword($request->input('newpassword')),
             'saddress' => $request->input('address'),
             'snic' => '',
             'sdob' => $request->input('dob'),
@@ -299,6 +322,7 @@ class AuthController extends Controller
             'usertype' => 's'
         ]);
 
+        $request->session()->regenerate();
         Session::put('user', $email);
         Session::put('usertype', 's');
         Session::put('username', $request->input('fname'));
@@ -308,37 +332,35 @@ class AuthController extends Controller
 
     public function showFacultySignup()
     {
-        return view('auth.signup-faculty');
+        $subjects = $this->subjectOptions();
+
+        return view('auth.signup-faculty', compact('subjects'));
     }
 
     public function registerFaculty(Request $request)
     {
         $request->validate([
-            'fname' => 'required',
-            'lname' => 'required',
-            'newemail' => 'required|email|unique:webuser,email',
+            'fname' => 'required|string|max:100',
+            'lname' => 'required|string|max:100',
+            'newemail' => 'required|email|max:255|unique:webuser,email',
             'tele' => 'required|regex:/^\d{11}$/',
-            'subject' => 'required',
-            'newpassword' => 'required',
+            'subject' => 'required|string|max:255',
+            'newpassword' => 'required|string|min:8',
             'cpassword' => 'required|same:newpassword'
         ]);
 
-        $name = $request->input('fname') . " " . $request->input('lname');
+        $name = trim($request->input('fname') . ' ' . $request->input('lname'));
         $email = $request->input('newemail');
-        $subjectName = $request->input('subject');
+        $subjectId = $this->resolveSubjectId($request->input('subject'));
 
-        $existingSubject = DB::table('subject')->where('sname', $subjectName)->first();
-        if ($existingSubject) {
-            $subjectId = $existingSubject->id;
-        }
-        else {
-            $subjectId = DB::table('subject')->insertGetId(['sname' => $subjectName]);
+        if (!$subjectId) {
+            return back()->withInput()->with('error', 'Please select or enter a valid subject.');
         }
 
         Faculty::insert([
             'facemail' => $email,
             'facname' => $name,
-            'facpassword' => $request->input('newpassword'),
+            'facpassword' => $this->hashPassword($request->input('newpassword')),
             'factel' => $request->input('tele'),
             'subject' => $subjectId
         ]);
@@ -348,6 +370,7 @@ class AuthController extends Controller
             'usertype' => 'f'
         ]);
 
+        $request->session()->regenerate();
         Session::put('user', $email);
         Session::put('usertype', 'f');
         Session::put('username', $request->input('fname'));
@@ -355,9 +378,11 @@ class AuthController extends Controller
         return redirect('/faculty/dashboard');
     }
 
-    public function logout()
+    public function logout(Request $request)
     {
         Session::flush();
-        return redirect('/login');
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return $this->redirectToLogin();
     }
 }
